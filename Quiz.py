@@ -1,31 +1,56 @@
+import mysql.connector
+from mysql.connector import Error
 from tkinter import *
 from tkinter import messagebox
 
-# Mock database (for demonstration purposes)
-users_db = {
-    "teacher": {"password": "teacher123", "role": "teacher"},
-    "student": {"password": "student123", "role": "student"}
-}
+# Function to connect to MySQL database
+def connect_to_db():
+    try:
+        connection = mysql.connector.connect(host='localhost',
+                                             database='QuizBee',
+                                             user='root',
+                                             password='Nik@1234')
+        return connection
+    except Error as e:
+        print("Error while connecting to MySQL", e)
+        return None
 
+# Function to perform user login authentication
+def sign_in():
+    username = user.get()
+    passwd = password.get()
+
+    try:
+        connection = connect_to_db()
+        if connection:
+            cursor = connection.cursor(dictionary=True)
+            query = "SELECT * FROM users WHERE username = %s AND password = %s"
+            cursor.execute(query, (username, passwd))
+            user_data = cursor.fetchone()
+            
+            if user_data:
+                messagebox.showinfo("Login Success", f"Welcome {username.capitalize()}! You are logged in as a {user_data['role'].capitalize()}.")
+                clear_window()
+                if user_data['role'] == "teacher":
+                    show_teacher_dashboard()
+                else:
+                    show_student_dashboard()
+            else:
+                messagebox.showerror("Login Failed", "Invalid Username or Password")
+
+    except Error as e:
+        print("Error while connecting to MySQL", e)
+    finally:
+        if connection and connection.is_connected():
+            cursor.close()
+            connection.close()
+
+# Function to clear window contents
 def clear_window():
     for widget in root.winfo_children():
         widget.destroy()
 
-def sign_in():
-    username = user.get()
-    passwd = password.get()
-    if username in users_db and users_db[username]["password"] == passwd:
-        role = users_db[username]["role"]
-        messagebox.showinfo("Login Success", f"Welcome {username.capitalize()}! You are logged in as a {role.capitalize()}.")
-        # Clear the window and show the appropriate dashboard
-        clear_window()
-        if role == "teacher":
-            show_teacher_dashboard()
-        else:
-            show_student_dashboard()
-    else:
-        messagebox.showerror("Login Failed", "Invalid Username or Password")
-
+# Function to display teacher dashboard
 def show_teacher_dashboard():
     root.title("Teacher Dashboard")
     Label(root, text="Welcome to the Teacher Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
@@ -44,11 +69,13 @@ def view_results():
 def manage_questions():
     messagebox.showinfo("Manage Questions", "This feature is under construction.")
 
+# Function to display student dashboard
 def show_student_dashboard():
     root.title("Student Dashboard")
     Label(root, text="Welcome to the Student Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
     # Add more widgets and functionalities as needed
 
+# Main Tkinter window
 root = Tk()
 root.title('QuizBee')
 root.geometry('925x500+300+200')
