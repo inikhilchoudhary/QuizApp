@@ -49,7 +49,9 @@ def sign_in(user, password):
             if user_data:
                 messagebox.showinfo("Login Success", f"Welcome {username.capitalize()}! You are logged in as a {user_data['role'].capitalize()}.")
                 clear_window()
-                if user_data['role'] == "teacher":
+                if user_data['role'] == "admin":
+                    show_admin_dashboard()
+                elif user_data['role'] == "teacher":
                     show_teacher_dashboard()
                 else:
                     show_student_dashboard()
@@ -62,6 +64,7 @@ def sign_in(user, password):
         if connection and connection.is_connected():
             cursor.close()
             connection.close()
+
 # Function to perform user Signup
 def sign_up():
     pass
@@ -77,7 +80,7 @@ def show_admin_dashboard():
 
     Button(root, text="Manage Teachers", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=manage_teachers).pack(pady=10)
     Button(root, text="Manage Students", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=manage_students).pack(pady=10)
-# Function to display teacher dashboard
+    Button(root, text="Back", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=lambda: go_back(show_login_form)).pack(pady=10)# Function to display teacher dashboard
 def show_teacher_dashboard():
     root.title("Teacher Dashboard")
     Label(root, text="Welcome to the Teacher Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
