@@ -45,6 +45,10 @@ def sign_in():
             cursor.close()
             connection.close()
 
+# Function to perform user Signup
+def sign_up():
+    pass
+
 # Function to clear window contents
 def clear_window():
     for widget in root.winfo_children():
@@ -141,6 +145,6 @@ Frame(LoginFrame, width=295, height=2, bg="Black").place(x=25, y=180)
 Button(LoginFrame, width=39, pady=7, text="Sign In", bg="#57a1f8", fg="white", border=0, command=sign_in).place(x=35, y=210)
 
 Label(LoginFrame, text="Don't have an account?", fg="Black", bg="white", font=('Microsoft YaHei UI Light', 8)).place(x=60, y=250)
-Button(LoginFrame, width=11, text="Sign up", border=0, bg="white", cursor="hand2", fg="#57a1f8").place(x=168, y=250)
+Button(LoginFrame, width=11, text="Sign up", border=0, bg="white", cursor="hand2", fg="#57a1f8",command=sign_up).place(x=168, y=250)
 
 root.mainloop()
