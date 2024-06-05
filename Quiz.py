@@ -71,6 +71,8 @@ def sign_up():
 
 
 ###----------------------------------DASHBOARDS CODE -----------------------------------------###
+#switch indicator for admin menu
+
 def show_admin_dashboard():
     clear_window()
     menu_bar_color = '#383838'
@@ -94,34 +96,49 @@ def show_admin_dashboard():
     menu_bar_frame.pack_propagate(0)
     menu_bar_frame.configure(width=45)
 
-    toggle_menu_btn = Button(menu_bar_frame, image=toggle_icon, bg=menu_bar_color, bd=0)
+    toggle_menu_btn = Button(menu_bar_frame, image=toggle_icon, bg=menu_bar_color, bd=0,activebackground=menu_bar_color)
     toggle_menu_btn.place(x=4, y=10)
     
-    user_btn = Button(menu_bar_frame, image=user_icon, bg=menu_bar_color, bd=0)
+    user_btn = Button(menu_bar_frame, image=user_icon, bg=menu_bar_color, bd=0,activebackground=menu_bar_color)
     user_btn.place(x=9, y=130, width=30, height=40)
     
-    teacher_btn = Button(menu_bar_frame, image=teacher_icon, bg=menu_bar_color, bd=0,command=manage_teachers)
+    teacher_btn = Button(menu_bar_frame, image=teacher_icon, bg=menu_bar_color, bd=0,activebackground=menu_bar_color,command=manage_teachers)
     teacher_btn.place(x=9, y=250, width=30, height=40)
     
-    students_btn = Button(menu_bar_frame, image=student_icon, bg=menu_bar_color, bd=0,command=manage_students)
+    students_btn = Button(menu_bar_frame, image=student_icon, bg=menu_bar_color, bd=0,activebackground=menu_bar_color,command=manage_students)
     students_btn.place(x=9, y=190, width=30, height=40)
     
-    exit_btn = Button(menu_bar_frame, image=exit_icon, bg=menu_bar_color, bd=0, command=root.destroy)
+    exit_btn = Button(menu_bar_frame, image=exit_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=show_login_form)
     exit_btn.place(x=9, y=310, width=30, height=40)
 
+    #now indicator of active 
+    user_btn_indicator=Label(menu_bar_frame,bg='white')
+    user_btn_indicator.place(x=3,y=130,width=3,height=40)
+
+    students_btn_indicator=Label(menu_bar_frame,bg=menu_bar_color)
+    students_btn_indicator.place(x=3,y=190,width=3,height=40)
+
+    teacher_btn_indicator=Label(menu_bar_frame,bg=menu_bar_color)
+    teacher_btn_indicator.place(x=3,y=250,width=3,height=40)
+
+    exit_btn_indicator=Label(menu_bar_frame,bg=menu_bar_color)
+    exit_btn_indicator.place(x=3,y=310,width=3,height=40)
 
 
 
 
+    main_frame=Frame(root)
 
-"""
-    root.title("Admin Dashboard")
-    Label(root, text="Welcome to the Admin Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
 
-    Button(root, text="Manage Teachers", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=manage_teachers).pack(pady=10)
-    Button(root, text="Manage Students", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=manage_students).pack(pady=10)
-    Button(root, text="Back", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=lambda: go_back(show_login_form)).pack(pady=10)# Function to display teacher dashboard
-"""
+    main_frame.pack(side=LEFT)
+    main_frame.propagate(False)
+    main_frame.configure(height=450,width=875)
+
+
+
+
+    #------------------------------------------------------------------------------------------------------------#
+
 def show_teacher_dashboard():
     root.title("Teacher Dashboard")
     Label(root, text="Welcome to the Teacher Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
@@ -462,7 +479,6 @@ def show_login_form():
     # Sign In button with functionality
     Button(LoginFrame, width=39, pady=7, text="Sign In", bg="#57a1f8", fg="white", border=0, command=sign_in).place(x=35, y=210)
 
-    Label(LoginFrame, text="Don't have an account?", fg="Black", bg="white", font=('Microsoft YaHei UI Light', 8)).place(x=60, y=250)
     Button(LoginFrame, width=39, pady=7, text="Sign In", bg="#57a1f8", fg="white", border=0, command=lambda: sign_in(user, password)).place(x=35, y=210)
 
     root.mainloop()
