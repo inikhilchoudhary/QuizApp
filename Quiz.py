@@ -1,3 +1,4 @@
+
 import mysql.connector
 from mysql.connector import Error
 from tkinter import *
@@ -158,27 +159,11 @@ def remove_teacher():
 
     Label(root, text="Remove Teacher", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
     
-    teacher_listbox = Listbox(root, width=50, height=10)
-    teacher_listbox.pack(pady=10)
-
-    try:
-        connection = connect_to_db()
-        if connection:
-            cursor = connection.cursor()
-            query = "SELECT username FROM users WHERE role = 'teacher'"
-            cursor.execute(query)
-            teachers = cursor.fetchall()
-            for teacher in teachers:
-                teacher_listbox.insert(END, teacher[0])
-            cursor.close()
-    except Error as e:
-        print("Error while connecting to MySQL", e)
-    finally:
-        if connection and connection.is_connected():
-            connection.close()
-
-    Button(root, text="Remove Teacher", width=20, pady=7, bg="#57a1f8", fg="white", 
-           command=lambda: remove_teacher_from_db(teacher_listbox.get(ACTIVE))).pack(pady=20)
+    Label(root, text="Username", bg='white').pack(pady=5)
+    entry_username = Entry(root, width=30, bg='white')
+    entry_username.pack(pady=5)
+    
+    Button(root, text="Remove Teacher", width=20, pady=7, bg="#57a1f8", fg="white", command=lambda: remove_teacher_from_db(entry_username.get())).pack(pady=20)
     Button(root, text="Back to Manage Teachers", width=20, pady=7, bg="#57a1f8", fg="white", command=manage_teachers).pack(pady=10)
 
 def remove_teacher_from_db(username):
@@ -261,27 +246,11 @@ def remove_student():
 
     Label(root, text="Remove Student", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
     
-    student_listbox = Listbox(root, width=50, height=10)
-    student_listbox.pack(pady=10)
-
-    try:
-        connection = connect_to_db()
-        if connection:
-            cursor = connection.cursor()
-            query = "SELECT username FROM users WHERE role = 'student'"
-            cursor.execute(query)
-            students = cursor.fetchall()
-            for student in students:
-                student_listbox.insert(END, student[0])
-            cursor.close()
-    except Error as e:
-        print("Error while connecting to MySQL", e)
-    finally:
-        if connection and connection.is_connected():
-            connection.close()
-
-    Button(root, text="Remove Student", width=20, pady=7, bg="#57a1f8", fg="white", 
-           command=lambda: remove_student_from_db(student_listbox.get(ACTIVE))).pack(pady=20)
+    Label(root, text="Username", bg='white').pack(pady=5)
+    entry_username = Entry(root, width=30, bg='white')
+    entry_username.pack(pady=5)
+    
+    Button(root, text="Remove Student", width=20, pady=7, bg="#57a1f8", fg="white", command=lambda: remove_student_from_db(entry_username.get())).pack(pady=20)
     Button(root, text="Back to Manage Students", width=20, pady=7, bg="#57a1f8", fg="white", command=manage_students).pack(pady=10)
 
 def remove_student_from_db(username):
