@@ -34,7 +34,6 @@ def clear_window():
 
 
 ###----------------------------------AUTHENTICATION FUNCTIONS CODE ---------------------------###
-# Function to perform user login authentication
 def sign_in(user, password):
     username = user.get()
     passwd = password.get()
@@ -65,8 +64,6 @@ def sign_in(user, password):
         if connection and connection.is_connected():
             cursor.close()
             connection.close()
-
-# Function to perform user Signup
 def sign_up():
     pass
 ###----------------------------------END AUTHENTICATION FUNCTIONS CODE -----------------------###
@@ -74,14 +71,57 @@ def sign_up():
 
 
 ###----------------------------------DASHBOARDS CODE -----------------------------------------###
-# Function to display admin dashboard
 def show_admin_dashboard():
+    clear_window()
+    menu_bar_color = '#383838'
+    
+    # Load icons (ensure the paths are correct)
+    toggle_icon = PhotoImage(file='images/toggle_btn_icon.png')
+    user_icon = PhotoImage(file='images/User.png')
+    teacher_icon = PhotoImage(file='images/Teacher.png')
+    student_icon = PhotoImage(file='images/Students.png')
+    exit_icon = PhotoImage(file='images/Exit.png')
+
+    # Store references to images to prevent garbage collection
+    root.toggle_icon = toggle_icon
+    root.user_icon = user_icon
+    root.teacher_icon = teacher_icon
+    root.student_icon = student_icon
+    root.exit_icon = exit_icon
+    
+    menu_bar_frame = Frame(root, bg=menu_bar_color)
+    menu_bar_frame.pack(side=LEFT, fill=Y, padx=3, pady=4)
+    menu_bar_frame.pack_propagate(0)
+    menu_bar_frame.configure(width=45)
+
+    toggle_menu_btn = Button(menu_bar_frame, image=toggle_icon, bg=menu_bar_color, bd=0)
+    toggle_menu_btn.place(x=4, y=10)
+    
+    user_btn = Button(menu_bar_frame, image=user_icon, bg=menu_bar_color, bd=0)
+    user_btn.place(x=9, y=130, width=30, height=40)
+    
+    teacher_btn = Button(menu_bar_frame, image=teacher_icon, bg=menu_bar_color, bd=0,command=manage_teachers)
+    teacher_btn.place(x=9, y=250, width=30, height=40)
+    
+    students_btn = Button(menu_bar_frame, image=student_icon, bg=menu_bar_color, bd=0,command=manage_students)
+    students_btn.place(x=9, y=190, width=30, height=40)
+    
+    exit_btn = Button(menu_bar_frame, image=exit_icon, bg=menu_bar_color, bd=0, command=root.destroy)
+    exit_btn.place(x=9, y=310, width=30, height=40)
+
+
+
+
+
+
+"""
     root.title("Admin Dashboard")
     Label(root, text="Welcome to the Admin Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
 
     Button(root, text="Manage Teachers", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=manage_teachers).pack(pady=10)
     Button(root, text="Manage Students", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=manage_students).pack(pady=10)
     Button(root, text="Back", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=lambda: go_back(show_login_form)).pack(pady=10)# Function to display teacher dashboard
+"""
 def show_teacher_dashboard():
     root.title("Teacher Dashboard")
     Label(root, text="Welcome to the Teacher Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
@@ -92,7 +132,6 @@ def show_teacher_dashboard():
     Button(root, text="Manage Questions", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=manage_questions).pack(pady=10)
     Button(root, text="Add Student", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=add_student_by_teacher).pack(pady=10)
     Button(root, text="Back", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=lambda: go_back(show_login_form)).pack(pady=10)
-# Function to display student dashboard
 def show_student_dashboard():
     root.title("Student Dashboard")
     Label(root, text="Welcome to the Student Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
