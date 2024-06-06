@@ -61,8 +61,24 @@ menu_bar_frame.configure(width=45)
 '''
 
 
+def homePage1():
+    home1_frame=Frame(main_frame)
+    lb=Label(home1_frame,text='Home Page 1')
+    lb.pack()
+    home1_frame.pack(pady=20)
+
+
 options_frames=Frame(root,bg="red")
 
+
+home_btn=Button(options_frames,text='Home1',bd=0)
+home_btn.place(x=10,y=50)
+
+home2_btn=Button(options_frames,text='Home2',bd=0)
+home2_btn.place(x=10,y=100)
+
+home3_btn=Button(options_frames,text='Home3',bd=0)
+home3_btn.place(x=10,y=150)
 
 options_frames.pack(side=LEFT)
 options_frames.propagate(False)

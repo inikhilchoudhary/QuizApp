@@ -73,8 +73,7 @@ def sign_up():
 ###----------------------------------DASHBOARDS CODE -----------------------------------------###
 #switch indicator for admin menu
 
-def show_admin_dashboard():
-    clear_window()
+def admin_Nav():
     menu_bar_color = '#383838'
     
     # Load icons (ensure the paths are correct)
@@ -111,33 +110,16 @@ def show_admin_dashboard():
     exit_btn = Button(menu_bar_frame, image=exit_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=show_login_form)
     exit_btn.place(x=9, y=310, width=30, height=40)
 
-    #now indicator of active 
-    user_btn_indicator=Label(menu_bar_frame,bg='white')
-    user_btn_indicator.place(x=3,y=130,width=3,height=40)
-
-    students_btn_indicator=Label(menu_bar_frame,bg=menu_bar_color)
-    students_btn_indicator.place(x=3,y=190,width=3,height=40)
-
-    teacher_btn_indicator=Label(menu_bar_frame,bg=menu_bar_color)
-    teacher_btn_indicator.place(x=3,y=250,width=3,height=40)
-
-    exit_btn_indicator=Label(menu_bar_frame,bg=menu_bar_color)
-    exit_btn_indicator.place(x=3,y=310,width=3,height=40)
-
-
-
-
-    main_frame=Frame(root)
-
+    main_frame=Frame(root,highlightbackground="black",highlightthickness=2)
 
     main_frame.pack(side=LEFT)
     main_frame.propagate(False)
-    main_frame.configure(height=450,width=875)
+    main_frame.configure(height=500,width=900)
 
 
-
-
-    #------------------------------------------------------------------------------------------------------------#
+def show_admin_dashboard():
+    clear_window()
+    admin_Nav()
 
 def show_teacher_dashboard():
     root.title("Teacher Dashboard")
@@ -160,13 +142,45 @@ def show_student_dashboard():
 ###----------------------------------ADMIN DASHBOARDS CODE -----------------------------------###
 def manage_teachers():
     clear_window()
-    root.title("Manage Teachers")
+    menu_bar_color = '#383838'
 
-    Label(root, text="Manage Teachers", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
+    root.title("Manage Teachers")    
+    # Load icons (ensure the paths are correct)
+    add_teacher_icon = PhotoImage(file='images/Add.png')
+    remove_teacher_icon = PhotoImage(file='images/Remove.png')
+    more_icon = PhotoImage(file='images/More.png')
+
+    # Store references to images to prevent garbage collection
+    root.add_teacher_icon = add_teacher_icon
+    root.remove_teacher_icon = remove_teacher_icon
+    root.more_dashboard_icon = more_icon
+
+    option_frame = Frame(root, bg=menu_bar_color)
+    option_frame.pack(side=RIGHT)
+    option_frame.pack_propagate(0)
+    option_frame.configure(width=880, height=500)
+
+    # Calculate the spacing between buttons
+    button_width = 128
+    num_buttons = 3
+    total_buttons_width = button_width * num_buttons
+    spacing = (880 - total_buttons_width) // (num_buttons + 1)
+
+    # Create buttons with images only, ensuring they display the full image
+    add_teacher_btn = Button(option_frame, image=add_teacher_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=add_teacher)
+    add_teacher_btn.place(x=spacing, y=180, width=button_width, height=128)
+
+    remove_teacher_btn = Button(option_frame, image=remove_teacher_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=remove_teacher)
+    remove_teacher_btn.place(x=spacing * 2 + button_width, y=180, width=button_width, height=128)
+
+    more_btn = Button(option_frame, image=more_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color)
+    more_btn.place(x=spacing * 3 + button_width * 2, y=180, width=button_width, height=128)
+
+    # Add labels under each button
+    Label(option_frame, text="Add Teacher", bg=menu_bar_color, fg="white").place(x=spacing, y=320, width=button_width)
+    Label(option_frame, text="Remove Teacher", bg=menu_bar_color, fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
+    Label(option_frame, text="More", bg=menu_bar_color, fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
     
-    Button(root, text="Add Teacher", width=20, pady=7, bg="#57a1f8", fg="white", command=add_teacher).pack(pady=20)
-    Button(root, text="Remove Teacher", width=20, pady=7, bg="#57a1f8", fg="white", command=remove_teacher).pack(pady=20)
-    Button(root, text="Back to Admin Dashboard", width=20, pady=7, bg="#57a1f8", fg="white", command=show_admin_dashboard).pack(pady=10)
 
 def add_teacher():
     clear_window()
@@ -243,13 +257,44 @@ def remove_teacher_from_db(username):
 
 def manage_students():
     clear_window()
-    root.title("Manage Students")
+    menu_bar_color = '#383838'
 
-    Label(root, text="Manage Students", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
-    
-    Button(root, text="Add Student", width=20, pady=7, bg="#57a1f8", fg="white", command=add_student).pack(pady=20)
-    Button(root, text="Remove Student", width=20, pady=7, bg="#57a1f8", fg="white", command=remove_student).pack(pady=20)
-    Button(root, text="Back to Admin Dashboard", width=20, pady=7, bg="#57a1f8", fg="white", command=show_admin_dashboard).pack(pady=10)
+    root.title("Manage Teachers")    
+    # Load icons (ensure the paths are correct)
+    add_student_icon = PhotoImage(file='images/Add.png')
+    remove_student_icon = PhotoImage(file='images/Remove.png')
+    more_icon = PhotoImage(file='images/More.png')
+
+    # Store references to images to prevent garbage collection
+    root.add_student_icon = add_student_icon
+    root.remove_student_icon = remove_student_icon
+    root.more_icon = more_icon
+
+    option_frame = Frame(root, bg=menu_bar_color)
+    option_frame.pack(side=RIGHT)
+    option_frame.pack_propagate(0)
+    option_frame.configure(width=880, height=500)
+
+    # Calculate the spacing between buttons
+    button_width = 128
+    num_buttons = 3
+    total_buttons_width = button_width * num_buttons
+    spacing = (880 - total_buttons_width) // (num_buttons + 1)
+
+    # Create buttons with images only, ensuring they display the full image
+    add_student_btn = Button(option_frame, image=add_student_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=add_teacher)
+    add_student_btn.place(x=spacing, y=180, width=button_width, height=128)
+
+    remove_student_btn = Button(option_frame, image=remove_student_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=remove_teacher)
+    remove_student_btn.place(x=spacing * 2 + button_width, y=180, width=button_width, height=128)
+
+    more_btn = Button(option_frame, image=more_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color)
+    more_btn.place(x=spacing * 3 + button_width * 2, y=180, width=button_width, height=128)
+
+    # Add labels under each button
+    Label(option_frame, text="Add Student", bg=menu_bar_color, fg="white").place(x=spacing, y=320, width=button_width)
+    Label(option_frame, text="Remove Student", bg=menu_bar_color, fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
+    Label(option_frame, text="More", bg=menu_bar_color, fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
 
 def add_student():
     clear_window()
@@ -458,6 +503,9 @@ def show_login_form():
 
     Frame(LoginFrame, width=295, height=2, bg="Black").place(x=25, y=107)
 
+
+
+
     def on_enter(e):
         password.delete(0, 'end')
 
@@ -485,7 +533,7 @@ def show_login_form():
 ###----------------------------------END AUTHENTICATION CODE  (LOGIN/SIGNIN) ----------------###
 
 
-###----------------------------------TJINTER WINDOW CODE ------------------------------------###
+###----------------------------------TKINTER WINDOW CODE ------------------------------------###
 
 root = Tk()
 root.title('QuizBee')
