@@ -1,3 +1,6 @@
+#frame in fraME
+
+'''
 from tkinter import *
 
 root = Tk()
@@ -79,4 +82,40 @@ Label(exit_frame, text="Exit Window", font=('Arial', 24)).pack(expand=True)
 # Show initial frame
 show_frame(user_frame)
 
+root.mainloop()
+'''
+
+#transparent
+import tkinter as tk
+
+def clear_window():
+    for widget in root.winfo_children():
+        widget.destroy()
+
+def add_teacher():
+    clear_window()
+    root.title("Add Teacher")
+
+    MainFrame = Frame(root, bg=menu_bar_color)
+    MainFrame.pack(fill="both", expand=True)
+
+    canvas = tk.Canvas(MainFrame, bg=menu_bar_color, highlightthickness=0)
+    canvas.pack(fill="both", expand=True)
+
+    width, height = 700, 300
+    x1, y1 = (1000 - width) // 2, 100  # Center horizontally and offset vertically
+    x2, y2 = x1 + width, y1 + height
+
+    # Add the InputFrame to the canvas
+    InputFrame = Frame(canvas, bg='#8A2BE2')
+    InputFrame_window = canvas.create_window(x1, y1, anchor="nw", window=InputFrame)
+
+    InputFrame.propagate(0)
+    InputFrame.configure(width=width, height=height)
+
+# Example initialization of Tkinter
+root = tk.Tk()
+menu_bar_color = '#ffffff'  # Define your menu bar color here
+
+add_teacher()
 root.mainloop()

@@ -1,8 +1,10 @@
-
 import mysql.connector
 from mysql.connector import Error
 from tkinter import *
 from tkinter import messagebox
+
+back_ground_clr = '#383838'
+
 
 ###----------------------------------DATABASE CONNECTION CODE --------------------------------###
 # Function to connect to MySQL database (Main Data base --> quizbee_db)
@@ -74,7 +76,7 @@ def sign_up():
 #switch indicator for admin menu
 
 def admin_Nav():
-    menu_bar_color = '#383838'
+    back_ground_clr = '#383838'
     
     # Load icons (ensure the paths are correct)
     toggle_icon = PhotoImage(file='images/toggle_btn_icon.png')
@@ -90,24 +92,24 @@ def admin_Nav():
     root.student_icon = student_icon
     root.exit_icon = exit_icon
     
-    menu_bar_frame = Frame(root, bg=menu_bar_color)
+    menu_bar_frame = Frame(root, bg=back_ground_clr)
     menu_bar_frame.pack(side=LEFT, fill=Y, padx=3, pady=4)
     menu_bar_frame.pack_propagate(0)
     menu_bar_frame.configure(width=45)
 
-    toggle_menu_btn = Button(menu_bar_frame, image=toggle_icon, bg=menu_bar_color, bd=0,activebackground=menu_bar_color)
+    toggle_menu_btn = Button(menu_bar_frame, image=toggle_icon, bg=back_ground_clr, bd=0,activebackground=back_ground_clr)
     toggle_menu_btn.place(x=4, y=10)
     
-    user_btn = Button(menu_bar_frame, image=user_icon, bg=menu_bar_color, bd=0,activebackground=menu_bar_color)
+    user_btn = Button(menu_bar_frame, image=user_icon, bg=back_ground_clr, bd=0,activebackground=back_ground_clr)
     user_btn.place(x=9, y=130, width=30, height=40)
     
-    teacher_btn = Button(menu_bar_frame, image=teacher_icon, bg=menu_bar_color, bd=0,activebackground=menu_bar_color,command=manage_teachers)
+    teacher_btn = Button(menu_bar_frame, image=teacher_icon, bg=back_ground_clr, bd=0,activebackground=back_ground_clr,command=manage_teachers)
     teacher_btn.place(x=9, y=250, width=30, height=40)
     
-    students_btn = Button(menu_bar_frame, image=student_icon, bg=menu_bar_color, bd=0,activebackground=menu_bar_color,command=manage_students)
+    students_btn = Button(menu_bar_frame, image=student_icon, bg=back_ground_clr, bd=0,activebackground=back_ground_clr,command=manage_students)
     students_btn.place(x=9, y=190, width=30, height=40)
     
-    exit_btn = Button(menu_bar_frame, image=exit_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=show_login_form)
+    exit_btn = Button(menu_bar_frame, image=exit_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=show_login_form)
     exit_btn.place(x=9, y=310, width=30, height=40)
 
     main_frame=Frame(root,highlightbackground="black",highlightthickness=2)
@@ -129,7 +131,7 @@ def show_teacher_dashboard():
     Button(root, text="Create Quiz", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=create_quiz).pack(pady=10)
     Button(root, text="View Results", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=view_results).pack(pady=10)
     Button(root, text="Manage Questions", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=manage_questions).pack(pady=10)
-    Button(root, text="Add Student", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=add_student_by_teacher).pack(pady=10)
+    Button(root, text="Add Student", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=add_student).pack(pady=10)
     Button(root, text="Back", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=lambda: go_back(show_login_form)).pack(pady=10)
 def show_student_dashboard():
     root.title("Student Dashboard")
@@ -142,7 +144,6 @@ def show_student_dashboard():
 ###----------------------------------ADMIN DASHBOARDS CODE -----------------------------------###
 def manage_teachers():
     clear_window()
-    menu_bar_color = '#383838'
 
     root.title("Manage Teachers")    
     # Load icons (ensure the paths are correct)
@@ -157,7 +158,7 @@ def manage_teachers():
     root.more_dashboard_icon = more_icon
     root.back_icon = back_icon
 
-    option_frame = Frame(root, bg=menu_bar_color)
+    option_frame = Frame(root, bg=back_ground_clr)
     option_frame.pack()
     option_frame.pack_propagate(0)
     option_frame.configure(width=1000, height=500)
@@ -169,48 +170,85 @@ def manage_teachers():
     spacing = (880 - total_buttons_width) // (num_buttons + 1)
 
     # Create buttons with images only, ensuring they display the full image
-    add_teacher_btn = Button(option_frame, image=add_teacher_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=add_teacher)
+    add_teacher_btn = Button(option_frame, image=add_teacher_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=add_teacher)
     add_teacher_btn.place(x=spacing, y=180, width=button_width, height=128)
 
-    remove_teacher_btn = Button(option_frame, image=remove_teacher_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=remove_teacher)
+    remove_teacher_btn = Button(option_frame, image=remove_teacher_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=remove_teacher)
     remove_teacher_btn.place(x=spacing * 2 + button_width, y=180, width=button_width, height=128)
 
-    more_btn = Button(option_frame, image=more_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color)
+    more_btn = Button(option_frame, image=more_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr)
     more_btn.place(x=spacing * 3 + button_width * 2, y=180, width=button_width, height=128)
     
-    back_btn = Button(option_frame, image=back_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color,command=show_admin_dashboard)
+    back_btn = Button(option_frame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
     back_btn.place( y=18, width=button_width, height=12)
 
     # Add labels under each button
-    Label(option_frame, text="Add Teacher", bg=menu_bar_color, fg="white").place(x=spacing, y=320, width=button_width)
-    Label(option_frame, text="Remove Teacher", bg=menu_bar_color, fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
-    Label(option_frame, text="More", bg=menu_bar_color, fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
+    Label(option_frame, text="Add Teacher", bg=back_ground_clr, fg="white").place(x=spacing, y=320, width=button_width)
+    Label(option_frame, text="Remove Teacher", bg=back_ground_clr, fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
+    Label(option_frame, text="More", bg=back_ground_clr, fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
     
 
 def add_teacher():
     clear_window()
     root.title("Add Teacher")
+    button_width = 128
 
-    Label(root, text="Add Teacher", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
     
-    Label(root, text="Name", bg='white').pack(pady=5)
-    entry_name = Entry(root, width=30, bg='white')
-    entry_name.pack(pady=5)
+
+    MainFrame=Frame(root,bg=back_ground_clr)
+    MainFrame.pack()
+    MainFrame.propagate(0)
+    MainFrame.configure(width=1000, height=500)
+    heading = Label(MainFrame, text="Add Teacher", fg='#57a1f8', font=('Microsoft YaHei UI Light', 23, 'bold'), bg=back_ground_clr)
+    heading.place(x=350, y=5)
+    #-------------------BUTTON ----------#
+    back_icon = PhotoImage(file='images/Back.png')
+    add_teacher_icon = PhotoImage(file='images/AddTchBtn.png')
+
+    root.back_icon = back_icon
+    root.add_student_icon = add_teacher_icon
+
+    back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=manage_teachers)
+    back_btn.place( y=18, width=button_width, height=12)
     
-    Label(root, text="Username", bg='white').pack(pady=5)
-    entry_username = Entry(root, width=30, bg='white')
-    entry_username.pack(pady=5)
-    
-    Label(root, text="Email", bg='white').pack(pady=5)
-    entry_email = Entry(root, width=30, bg='white')
-    entry_email.pack(pady=5)
-    
-    Label(root, text="Password", bg='white').pack(pady=5)
-    entry_password = Entry(root, width=30, show='*', bg='white')
-    entry_password.pack(pady=5)
-    
-    Button(root, text="Add Teacher", width=20, pady=7, bg="#57a1f8", fg="white", command=lambda: add_teacher_to_db(entry_name.get(), entry_username.get(), entry_email.get(), entry_password.get())).pack(pady=20)
-    Button(root, text="Back to Manage Teachers", width=20, pady=7, bg="#57a1f8", fg="white", command=manage_teachers).pack(pady=10)
+    #-------------------BACK BUTTON ----------#
+
+
+    InputFrame=Frame(MainFrame,bg='#8B8878')
+    InputFrame.pack(pady=100)
+    InputFrame.propagate(0)
+    InputFrame.configure(width=750, height=250)  
+
+
+    #Full name entry
+    Fullname = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Fullname.place(x=30, y=50)
+    FullNameheading = Label(InputFrame, text="Full Name", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+    FullNameheading.place(x=25,y=70)
+    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=70)
+
+    # User name entry
+    Username = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Username.place(x=300, y=50)
+    UserNameheading = Label(InputFrame, text="Username", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+    UserNameheading.place(x=300,y=70)
+    Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=70)
+
+    # email entry
+    Email = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Email.place(x=30, y=100)
+    Emailheading = Label(InputFrame, text="Email", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
+    Emailheading.place(x=25,y=120)
+    Frame(InputFrame, width=400, height=2, bg="Black").place(x=25, y=120)
+
+    #password
+    Password = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Password.place(x=30, y=150)
+    Passwordheading = Label(InputFrame, text="Password", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
+    Passwordheading.place(x=25,y=170)
+    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=170)
+
+    Button(InputFrame, image=add_teacher_icon, bd=0, width=250, bg="#8B8878", command=lambda: add_teacher_to_db(Fullname.get(), Username.get(), Email.get(), Password.get())).pack(side=BOTTOM)
 
 def add_teacher_to_db(name, username, email, password):
     try:
@@ -262,7 +300,7 @@ def remove_teacher_from_db(username):
 
 def manage_students():
     clear_window()
-    menu_bar_color = '#383838'
+    back_ground_clr = '#383838'
 
     root.title("Manage Teachers")    
     # Load icons (ensure the paths are correct)
@@ -279,7 +317,7 @@ def manage_students():
     root.back_icon = back_icon
 
 
-    option_frame = Frame(root, bg=menu_bar_color)
+    option_frame = Frame(root, bg=back_ground_clr)
     option_frame.pack()
     option_frame.pack_propagate(0)
     option_frame.configure(width=1000, height=500)
@@ -291,52 +329,100 @@ def manage_students():
     spacing = (880 - total_buttons_width) // (num_buttons + 1)
 
     # Create buttons with images only, ensuring they display the full image
-    add_student_btn = Button(option_frame, image=add_student_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=add_teacher)
+    add_student_btn = Button(option_frame, image=add_student_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=add_student)
     add_student_btn.place(x=spacing, y=180, width=button_width, height=128)
 
-    remove_student_btn = Button(option_frame, image=remove_student_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color, command=remove_teacher)
+    remove_student_btn = Button(option_frame, image=remove_student_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=remove_student)
     remove_student_btn.place(x=spacing * 2 + button_width, y=180, width=button_width, height=128)
 
-    more_btn = Button(option_frame, image=more_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color)
+    more_btn = Button(option_frame, image=more_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr)
     more_btn.place(x=spacing * 3 + button_width * 2, y=180, width=button_width, height=128)
 
-    back_btn = Button(option_frame, image=back_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color,command=show_admin_dashboard)
+    back_btn = Button(option_frame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
     back_btn.place( y=18, width=button_width, height=12)
 
     # Add labels under each button
-    Label(option_frame, text="Add Student", bg=menu_bar_color, fg="white").place(x=spacing, y=320, width=button_width)
-    Label(option_frame, text="Remove Student", bg=menu_bar_color, fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
-    Label(option_frame, text="More", bg=menu_bar_color, fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
+    Label(option_frame, text="Add Student", bg=back_ground_clr, fg="white").place(x=spacing, y=320, width=button_width)
+    Label(option_frame, text="Remove Student", bg=back_ground_clr, fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
+    Label(option_frame, text="More", bg=back_ground_clr, fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
 
 def add_student():
     clear_window()
     root.title("Add Student")
+    button_width = 128
 
-    Label(root, text="Add Student", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
+    MainFrame=Frame(root,bg=back_ground_clr)
+    MainFrame.pack()
+    MainFrame.propagate(0)
+    MainFrame.configure(width=1000, height=500)
+    heading = Label(MainFrame, text="Add Student", fg='#57a1f8', font=('Microsoft YaHei UI Light', 23, 'bold'), bg=back_ground_clr)
+    heading.place(x=350, y=5)
+    #-------------------BUTTON ----------#
+    back_icon = PhotoImage(file='images/Back.png')
+    add_teacher_icon = PhotoImage(file='images/AddStuBtn.png')
+
+    root.back_icon = back_icon
+    root.add_student_icon = add_teacher_icon
+
+    back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=manage_students)
+    back_btn.place( y=18, width=button_width, height=12)
     
-    Label(root, text="Name", bg='white').pack(pady=5)
-    entry_name = Entry(root, width=30, bg='white')
-    entry_name.pack(pady=5)
+    #-------------------BACK BUTTON ----------#
+
+
+    InputFrame=Frame(MainFrame,bg='#8B8878')
+    InputFrame.pack(pady=100)
+    InputFrame.propagate(0)
+    InputFrame.configure(width=750, height=250)  
+
+
+    #Full name entry
+    Fullname = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Fullname.place(x=30, y=50)
+    FullNameheading = Label(InputFrame, text="Full Name", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+    FullNameheading.place(x=25,y=70)
+    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=70)
+
+    # User name entry
+    Username = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Username.place(x=300, y=50)
+    UserNameheading = Label(InputFrame, text="Username", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+    UserNameheading.place(x=300,y=70)
+    Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=70)
+
+    # email entry
+    Email = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Email.place(x=30, y=100)
+    Emailheading = Label(InputFrame, text="Email", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
+    Emailheading.place(x=25,y=120)
+    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=120)
+
+    # Course entry
+    Course = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Course.place(x=300, y=100)
+    CourseNameheading = Label(InputFrame, text="Course", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+    CourseNameheading.place(x=300,y=120)
+    Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=120)
+
+
+    #password
+    Password = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Password.place(x=30, y=150)
+    Passwordheading = Label(InputFrame, text="Password", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
+    Passwordheading.place(x=25,y=170)
+    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=170)
+
+    Button(InputFrame, image=add_teacher_icon, bd=0, width=250, bg="#8B8878", command=lambda: add_student_to_db(Fullname.get(),Course.get(), Username.get(), Email.get(), Password.get())).pack(side=BOTTOM)
     
-    Label(root, text="Subject", bg='white').pack(pady=5)
-    entry_subject = Entry(root, width=30, bg='white')
-    entry_subject.pack(pady=5)
+
+
+
+
+    '''
+
     
-    Label(root, text="Username", bg='white').pack(pady=5)
-    entry_username = Entry(root, width=30, bg='white')
-    entry_username.pack(pady=5)
-    
-    Label(root, text="Email", bg='white').pack(pady=5)
-    entry_email = Entry(root, width=30, bg='white')
-    entry_email.pack(pady=5)
-    
-    Label(root, text="Password", bg='white').pack(pady=5)
-    entry_password = Entry(root, width=30, show='*', bg='white')
-    entry_password.pack(pady=5)
-    
-    Button(root, text="Add Student", width=20, pady=7, bg="#57a1f8", fg="white", command=lambda: add_student_to_db(entry_name.get(), entry_subject.get(), entry_username.get(), entry_email.get(), entry_password.get())).pack(pady=20)
     Button(root, text="Back to Manage Students", width=20, pady=7, bg="#57a1f8", fg="white", command=manage_students).pack(pady=10)
-
+    '''
 def add_student_to_db(name, subject, username, email, password):
     try:
         connection = connect_to_db()
