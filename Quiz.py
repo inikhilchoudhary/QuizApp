@@ -149,16 +149,18 @@ def manage_teachers():
     add_teacher_icon = PhotoImage(file='images/Add.png')
     remove_teacher_icon = PhotoImage(file='images/Remove.png')
     more_icon = PhotoImage(file='images/More.png')
+    back_icon = PhotoImage(file='images/Back.png')
 
     # Store references to images to prevent garbage collection
     root.add_teacher_icon = add_teacher_icon
     root.remove_teacher_icon = remove_teacher_icon
     root.more_dashboard_icon = more_icon
+    root.back_icon = back_icon
 
     option_frame = Frame(root, bg=menu_bar_color)
-    option_frame.pack(side=RIGHT)
+    option_frame.pack()
     option_frame.pack_propagate(0)
-    option_frame.configure(width=880, height=500)
+    option_frame.configure(width=1000, height=500)
 
     # Calculate the spacing between buttons
     button_width = 128
@@ -175,6 +177,9 @@ def manage_teachers():
 
     more_btn = Button(option_frame, image=more_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color)
     more_btn.place(x=spacing * 3 + button_width * 2, y=180, width=button_width, height=128)
+    
+    back_btn = Button(option_frame, image=back_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color,command=show_admin_dashboard)
+    back_btn.place( y=18, width=button_width, height=12)
 
     # Add labels under each button
     Label(option_frame, text="Add Teacher", bg=menu_bar_color, fg="white").place(x=spacing, y=320, width=button_width)
@@ -264,16 +269,20 @@ def manage_students():
     add_student_icon = PhotoImage(file='images/Add.png')
     remove_student_icon = PhotoImage(file='images/Remove.png')
     more_icon = PhotoImage(file='images/More.png')
+    back_icon = PhotoImage(file='images/Back.png')
+
 
     # Store references to images to prevent garbage collection
     root.add_student_icon = add_student_icon
     root.remove_student_icon = remove_student_icon
     root.more_icon = more_icon
+    root.back_icon = back_icon
+
 
     option_frame = Frame(root, bg=menu_bar_color)
-    option_frame.pack(side=RIGHT)
+    option_frame.pack()
     option_frame.pack_propagate(0)
-    option_frame.configure(width=880, height=500)
+    option_frame.configure(width=1000, height=500)
 
     # Calculate the spacing between buttons
     button_width = 128
@@ -290,6 +299,9 @@ def manage_students():
 
     more_btn = Button(option_frame, image=more_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color)
     more_btn.place(x=spacing * 3 + button_width * 2, y=180, width=button_width, height=128)
+
+    back_btn = Button(option_frame, image=back_icon, bg=menu_bar_color, bd=0, activebackground=menu_bar_color,command=show_admin_dashboard)
+    back_btn.place( y=18, width=button_width, height=12)
 
     # Add labels under each button
     Label(option_frame, text="Add Student", bg=menu_bar_color, fg="white").place(x=spacing, y=320, width=button_width)
