@@ -66,17 +66,18 @@ def sign_in(user, password):
         if connection and connection.is_connected():
             cursor.close()
             connection.close()
-def sign_up():
-    pass
 ###----------------------------------END AUTHENTICATION FUNCTIONS CODE -----------------------###
 
 
 
 ###----------------------------------DASHBOARDS CODE -----------------------------------------###
 #switch indicator for admin menu
+def show_frame(frame):
+        frame.tkraise()
 
-def admin_Nav():
-    back_ground_clr = '#383838'
+def show_admin_dashboard():
+    clear_window()
+    back_ground_clr = 'black'
     
     # Load icons (ensure the paths are correct)
     toggle_icon = PhotoImage(file='images/toggle_btn_icon.png')
@@ -91,38 +92,54 @@ def admin_Nav():
     root.teacher_icon = teacher_icon
     root.student_icon = student_icon
     root.exit_icon = exit_icon
+
+    main_frame = Frame(root, bg='black')
+    main_frame.pack()
+    main_frame.propagate(False)
+    main_frame.configure(height=500, width=1000)
     
-    menu_bar_frame = Frame(root, bg=back_ground_clr)
+    menu_bar_frame = Frame(main_frame, bg='black')
     menu_bar_frame.pack(side=LEFT, fill=Y, padx=3, pady=4)
     menu_bar_frame.pack_propagate(0)
     menu_bar_frame.configure(width=45)
 
-    toggle_menu_btn = Button(menu_bar_frame, image=toggle_icon, bg=back_ground_clr, bd=0,activebackground=back_ground_clr)
+    right_frame = Frame(main_frame, bg='white')
+    right_frame.pack(side=LEFT, fill=BOTH, expand=True)
+    right_frame.propagate(False)
+    right_frame.configure(height=500, width=955)
+
+    toggle_menu_btn = Button(menu_bar_frame, image=toggle_icon, bg=back_ground_clr, bd=0)
     toggle_menu_btn.place(x=4, y=10)
     
-    user_btn = Button(menu_bar_frame, image=user_icon, bg=back_ground_clr, bd=0,activebackground=back_ground_clr)
+    user_btn = Button(menu_bar_frame, image=user_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=lambda: show_frame(user_frame))
     user_btn.place(x=9, y=130, width=30, height=40)
     
-    teacher_btn = Button(menu_bar_frame, image=teacher_icon, bg=back_ground_clr, bd=0,activebackground=back_ground_clr,command=manage_teachers)
+    teacher_btn = Button(menu_bar_frame, image=teacher_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=lambda: show_frame(teacher_frame))
     teacher_btn.place(x=9, y=250, width=30, height=40)
     
-    students_btn = Button(menu_bar_frame, image=student_icon, bg=back_ground_clr, bd=0,activebackground=back_ground_clr,command=manage_students)
+    students_btn = Button(menu_bar_frame, image=student_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=lambda: show_frame(students_frame))
     students_btn.place(x=9, y=190, width=30, height=40)
     
     exit_btn = Button(menu_bar_frame, image=exit_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=show_login_form)
     exit_btn.place(x=9, y=310, width=30, height=40)
 
-    main_frame=Frame(root,highlightbackground="black",highlightthickness=2)
+    # Create sub-frames inside Right_frame
+    user_frame = Frame(right_frame, bg='lightblue')
+    teacher_frame = Frame(right_frame, bg='lightgreen')
+    students_frame = Frame(right_frame, bg='lightyellow')
 
-    main_frame.pack(side=LEFT)
-    main_frame.propagate(False)
-    main_frame.configure(height=500,width=900)
+    for frame in (user_frame, teacher_frame, students_frame):
+        frame.grid(row=0, column=0, sticky='nsew')
 
+    def show_frame(frame):
+        frame.tkraise()
 
-def show_admin_dashboard():
-    clear_window()
-    admin_Nav()
-
+    # Initialize the view by raising the default frame
+    show_frame(user_frame)
+    
+    # Fill the frames with initial content
+    manage_teachers(teacher_frame)
+    manage_students(students_frame)
 def show_teacher_dashboard():
     root.title("Teacher Dashboard")
     Label(root, text="Welcome to the Teacher Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
@@ -142,51 +159,46 @@ def show_student_dashboard():
 
 
 ###----------------------------------ADMIN DASHBOARDS CODE -----------------------------------###
-def manage_teachers():
-    clear_window()
+def manage_teachers(frame):
+    for widget in frame.winfo_children():
+        widget.destroy()
+    
+    frame.configure(bg='#383838')
+    frame.option_frame = Frame(frame, bg='#383838')
+    frame.option_frame.pack()
+    frame.option_frame.pack_propagate(0)
+    frame.option_frame.configure(width=955, height=500)
 
-    root.title("Manage Teachers")    
     # Load icons (ensure the paths are correct)
     add_teacher_icon = PhotoImage(file='images/Add.png')
     remove_teacher_icon = PhotoImage(file='images/Remove.png')
     more_icon = PhotoImage(file='images/More.png')
-    back_icon = PhotoImage(file='images/Back.png')
 
     # Store references to images to prevent garbage collection
-    root.add_teacher_icon = add_teacher_icon
-    root.remove_teacher_icon = remove_teacher_icon
-    root.more_dashboard_icon = more_icon
-    root.back_icon = back_icon
-
-    option_frame = Frame(root, bg=back_ground_clr)
-    option_frame.pack()
-    option_frame.pack_propagate(0)
-    option_frame.configure(width=1000, height=500)
+    frame.add_teacher_icon = add_teacher_icon
+    frame.remove_teacher_icon = remove_teacher_icon
+    frame.more_icon = more_icon
 
     # Calculate the spacing between buttons
     button_width = 128
     num_buttons = 3
     total_buttons_width = button_width * num_buttons
-    spacing = (880 - total_buttons_width) // (num_buttons + 1)
+    spacing = (955 - total_buttons_width) // (num_buttons + 1)
 
     # Create buttons with images only, ensuring they display the full image
-    add_teacher_btn = Button(option_frame, image=add_teacher_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=add_teacher)
+    add_teacher_btn = Button(frame.option_frame, image=add_teacher_icon, bg='#383838', bd=0, activebackground='#383838', command=add_teacher)
     add_teacher_btn.place(x=spacing, y=180, width=button_width, height=128)
 
-    remove_teacher_btn = Button(option_frame, image=remove_teacher_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=remove_teacher)
+    remove_teacher_btn = Button(frame.option_frame, image=remove_teacher_icon, bg='#383838', bd=0, activebackground='#383838', command=remove_teacher)
     remove_teacher_btn.place(x=spacing * 2 + button_width, y=180, width=button_width, height=128)
 
-    more_btn = Button(option_frame, image=more_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr)
+    more_btn = Button(frame.option_frame, image=more_icon, bg='#383838', bd=0, activebackground='#383838')
     more_btn.place(x=spacing * 3 + button_width * 2, y=180, width=button_width, height=128)
-    
-    back_btn = Button(option_frame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
-    back_btn.place( y=18, width=button_width, height=12)
 
     # Add labels under each button
-    Label(option_frame, text="Add Teacher", bg=back_ground_clr, fg="white").place(x=spacing, y=320, width=button_width)
-    Label(option_frame, text="Remove Teacher", bg=back_ground_clr, fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
-    Label(option_frame, text="More", bg=back_ground_clr, fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
-    
+    Label(frame.option_frame, text="Add Teacher", bg='#383838', fg="white").place(x=spacing, y=320, width=button_width)
+    Label(frame.option_frame, text="Remove Teacher", bg='#383838', fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
+    Label(frame.option_frame, text="More", bg='#383838', fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
 
 def add_teacher():
     clear_window()
@@ -284,145 +296,147 @@ def remove_teacher_from_db(username):
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            query = "DELETE FROM users WHERE username = %s AND role = 'teacher'"
-            cursor.execute(query, (username,))
+            # Start a transaction
+            connection.start_transaction()
+            
+            # Delete from Teachers table
+            query_teachers = "DELETE FROM teachers WHERE username = %s"
+            cursor.execute(query_teachers, (username,))
+            
+            # Delete from Users table
+            query_users = "DELETE FROM users WHERE username = %s AND role = 'teacher'"
+            cursor.execute(query_users, (username,))
+            
+            # Commit the transaction
             connection.commit()
+            
             if cursor.rowcount > 0:
                 messagebox.showinfo("Success", "Teacher removed successfully!")
             else:
                 messagebox.showinfo("Error", "No teacher found with that username.")
+                
             cursor.close()
     except Error as e:
+        # Rollback the transaction in case of error
+        if connection:
+            connection.rollback()
         print("Error while connecting to MySQL", e)
     finally:
         if connection and connection.is_connected():
             connection.close()
 
-def manage_students():
-    clear_window()
-    back_ground_clr = '#383838'
+def manage_students(frame):
+    for widget in frame.winfo_children():
+        widget.destroy()
+    
+    frame.configure(bg='#383838')
+    frame.option_frame = Frame(frame, bg='#383838')
+    frame.option_frame.pack()
+    frame.option_frame.pack_propagate(0)
+    frame.option_frame.configure(width=955, height=500)
 
-    root.title("Manage Teachers")    
+    back_icon = PhotoImage(file='images/Back.png')
+    root.back_icon = back_icon
+
+    back_btn = Button(frame.option_frame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=show_admin_dashboard)
+    back_btn.place(x=10, y=10) 
+
     # Load icons (ensure the paths are correct)
     add_student_icon = PhotoImage(file='images/Add.png')
     remove_student_icon = PhotoImage(file='images/Remove.png')
     more_icon = PhotoImage(file='images/More.png')
-    back_icon = PhotoImage(file='images/Back.png')
-
 
     # Store references to images to prevent garbage collection
-    root.add_student_icon = add_student_icon
-    root.remove_student_icon = remove_student_icon
-    root.more_icon = more_icon
-    root.back_icon = back_icon
-
-
-    option_frame = Frame(root, bg=back_ground_clr)
-    option_frame.pack()
-    option_frame.pack_propagate(0)
-    option_frame.configure(width=1000, height=500)
+    frame.add_student_icon = add_student_icon
+    frame.remove_student_icon = remove_student_icon
+    frame.more_icon = more_icon
 
     # Calculate the spacing between buttons
     button_width = 128
     num_buttons = 3
     total_buttons_width = button_width * num_buttons
-    spacing = (880 - total_buttons_width) // (num_buttons + 1)
+    spacing = (955 - total_buttons_width) // (num_buttons + 1)
 
     # Create buttons with images only, ensuring they display the full image
-    add_student_btn = Button(option_frame, image=add_student_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=add_student)
+    add_student_btn = Button(frame.option_frame, image=add_student_icon, bg='#383838', bd=0, activebackground='#383838', command=add_student)
     add_student_btn.place(x=spacing, y=180, width=button_width, height=128)
 
-    remove_student_btn = Button(option_frame, image=remove_student_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=remove_student)
+    remove_student_btn = Button(frame.option_frame, image=remove_student_icon, bg='#383838', bd=0, activebackground='#383838', command=remove_student)
     remove_student_btn.place(x=spacing * 2 + button_width, y=180, width=button_width, height=128)
 
-    more_btn = Button(option_frame, image=more_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr)
+    more_btn = Button(frame.option_frame, image=more_icon, bg='#383838', bd=0, activebackground='#383838')
     more_btn.place(x=spacing * 3 + button_width * 2, y=180, width=button_width, height=128)
 
-    back_btn = Button(option_frame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
-    back_btn.place( y=18, width=button_width, height=12)
-
     # Add labels under each button
-    Label(option_frame, text="Add Student", bg=back_ground_clr, fg="white").place(x=spacing, y=320, width=button_width)
-    Label(option_frame, text="Remove Student", bg=back_ground_clr, fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
-    Label(option_frame, text="More", bg=back_ground_clr, fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
+    Label(frame.option_frame, text="Add Student", bg='#383838', fg="white").place(x=spacing, y=320, width=button_width)
+    Label(frame.option_frame, text="Remove Student", bg='#383838', fg="white").place(x=spacing * 2 + button_width, y=320, width=button_width)
+    Label(frame.option_frame, text="More", bg='#383838', fg="white").place(x=spacing * 3 + button_width * 2, y=320, width=button_width)
 
 def add_student():
     clear_window()
     root.title("Add Student")
-    button_width = 128
-
-    MainFrame=Frame(root,bg=back_ground_clr)
+    MainFrame = Frame(root, bg=back_ground_clr)
     MainFrame.pack()
     MainFrame.propagate(0)
-    MainFrame.configure(width=1000, height=500)
+    MainFrame.configure(width=955, height=500)
+
     heading = Label(MainFrame, text="Add Student", fg='#57a1f8', font=('Microsoft YaHei UI Light', 23, 'bold'), bg=back_ground_clr)
     heading.place(x=350, y=5)
-    #-------------------BUTTON ----------#
+
+    # Back button
     back_icon = PhotoImage(file='images/Back.png')
-    add_teacher_icon = PhotoImage(file='images/AddStuBtn.png')
-
     root.back_icon = back_icon
-    root.add_student_icon = add_teacher_icon
 
-    back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=manage_students)
-    back_btn.place( y=18, width=button_width, height=12)
-    
-    #-------------------BACK BUTTON ----------#
+    # Pass MainFrame to manage_students when back button is clicked
+    back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr, command=lambda: manage_students(MainFrame))
+    back_btn.place(x=10, y=10)  # Adjust coordinates as needed
 
-
-    InputFrame=Frame(MainFrame,bg='#8B8878')
+    # InputFrame for student details
+    InputFrame = Frame(MainFrame, bg='#8B8878')
     InputFrame.pack(pady=100)
     InputFrame.propagate(0)
-    InputFrame.configure(width=750, height=250)  
+    InputFrame.configure(width=750, height=250)
 
-
-    #Full name entry
-    Fullname = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    # Full name entry
+    Fullname = Entry(InputFrame, width=25, fg="White", bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
     Fullname.place(x=30, y=50)
-    FullNameheading = Label(InputFrame, text="Full Name", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
-    FullNameheading.place(x=25,y=70)
+    FullNameheading = Label(InputFrame, text="Full Name", fg='#CCCCCC', font=('Microsoft YaHei UI', 9,), bg='#8B8878')
+    FullNameheading.place(x=25, y=70)
     Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=70)
 
-    # User name entry
-    Username = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    # Username entry
+    Username = Entry(InputFrame, width=25, fg="White", bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
     Username.place(x=300, y=50)
-    UserNameheading = Label(InputFrame, text="Username", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
-    UserNameheading.place(x=300,y=70)
+    UserNameheading = Label(InputFrame, text="Username", fg='#CCCCCC', font=('Microsoft YaHei UI', 9,), bg='#8B8878')
+    UserNameheading.place(x=300, y=70)
     Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=70)
 
-    # email entry
-    Email = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    # Email entry
+    Email = Entry(InputFrame, width=25, fg="Black", bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
     Email.place(x=30, y=100)
-    Emailheading = Label(InputFrame, text="Email", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
-    Emailheading.place(x=25,y=120)
+    Emailheading = Label(InputFrame, text="Email", fg='white', font=('Microsoft YaHei UI Light', 9,), bg='#8B8878')
+    Emailheading.place(x=25, y=120)
     Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=120)
 
     # Course entry
-    Course = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    Course = Entry(InputFrame, width=25, fg="White", bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
     Course.place(x=300, y=100)
-    CourseNameheading = Label(InputFrame, text="Course", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
-    CourseNameheading.place(x=300,y=120)
+    CourseNameheading = Label(InputFrame, text="Course", fg='#CCCCCC', font=('Microsoft YaHei UI', 9,), bg='#8B8878')
+    CourseNameheading.place(x=300, y=120)
     Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=120)
 
-
-    #password
-    Password = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+    # Password entry
+    Password = Entry(InputFrame, width=25, fg="Black", bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
     Password.place(x=30, y=150)
-    Passwordheading = Label(InputFrame, text="Password", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
-    Passwordheading.place(x=25,y=170)
+    Passwordheading = Label(InputFrame, text="Password", fg='white', font=('Microsoft YaHei UI Light', 9,), bg='#8B8878')
+    Passwordheading.place(x=25, y=170)
     Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=170)
 
-    Button(InputFrame, image=add_teacher_icon, bd=0, width=250, bg="#8B8878", command=lambda: add_student_to_db(Fullname.get(),Course.get(), Username.get(), Email.get(), Password.get())).pack(side=BOTTOM)
-    
+    # Add student button
+    add_teacher_icon = PhotoImage(file='images/AddStuBtn.png')
+    root.add_student_icon = add_teacher_icon
+    Button(InputFrame, image=add_teacher_icon, bd=0, width=250, bg="#8B8878", command=lambda: add_student_to_db(Fullname.get(), Course.get(), Username.get(), Email.get(), Password.get())).pack(side=BOTTOM)
 
-
-
-
-    '''
-
-    
-    Button(root, text="Back to Manage Students", width=20, pady=7, bg="#57a1f8", fg="white", command=manage_students).pack(pady=10)
-    '''
 def add_student_to_db(name, subject, username, email, password):
     try:
         connection = connect_to_db()
@@ -457,20 +471,36 @@ def remove_student_from_db(username):
         connection = connect_to_db()
         if connection:
             cursor = connection.cursor()
-            query = "DELETE FROM users WHERE username = %s AND role = 'student'"
-            cursor.execute(query, (username,))
+            # Start a transaction
+            connection.start_transaction()
+            
+            # Delete from Students table
+            query_students = "DELETE FROM students WHERE username = %s"
+            cursor.execute(query_students, (username,))
+            students_deleted = cursor.rowcount
+            
+            # Delete from Users table
+            query_users = "DELETE FROM users WHERE username = %s AND role = 'student'"
+            cursor.execute(query_users, (username,))
+            users_deleted = cursor.rowcount
+            
+            # Commit the transaction
             connection.commit()
-            if cursor.rowcount > 0:
-                messagebox.showinfo("Success", "Student removed successfully!")
+            
+            if students_deleted > 0 and users_deleted > 0:
+                messagebox.showinfo("Success", "Student removed successfully from both tables!")
             else:
                 messagebox.showinfo("Error", "No student found with that username.")
+                
             cursor.close()
     except Error as e:
+        # Rollback the transaction in case of error
+        if connection:
+            connection.rollback()
         print("Error while connecting to MySQL", e)
     finally:
         if connection and connection.is_connected():
-            connection.close()
-###----------------------------------END ADMIN DASHBOARDS CODE -------------------------------###
+            connection.close()###----------------------------------END ADMIN DASHBOARDS CODE -------------------------------###
 
 
 
@@ -566,7 +596,7 @@ def show_login_form():
     root.title('QuizBee')
     
     # Login page Image
-    LoginImg = PhotoImage(file="login.png")
+    LoginImg = PhotoImage(file="images/login.png")
     Label(root, image=LoginImg, bg="white").place(x=50, y=50)
 
     # Login detail frame
