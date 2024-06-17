@@ -256,6 +256,305 @@ def show_admin_dashboard():
 
         student_frame.pack()
 
+    def add_teacher():
+        clear_window()
+        root.title("Add Teacher")
+        button_width = 128
+        MainFrame=Frame(root,bg=back_ground_clr)
+        MainFrame.pack()
+        MainFrame.propagate(0)
+        MainFrame.configure(width=1000, height=500)
+        heading = Label(MainFrame, text="Add Teacher", fg='#57a1f8', font=('Microsoft YaHei UI Light', 23, 'bold'), bg=back_ground_clr)
+        heading.place(x=350, y=5)
+        #-------------------BUTTON ----------#
+        back_icon = PhotoImage(file='images/Back.png')
+        add_teacher_icon = PhotoImage(file='images/AddBtn.png')
+
+        root.add_student_icon = add_teacher_icon
+        root.back_icon = back_icon
+
+
+        back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
+        back_btn.place( y=18, width=button_width, height=12)
+
+    
+    
+        #-------------------BACK BUTTON ----------#
+
+
+        InputFrame=Frame(MainFrame,bg='#8B8878')
+        InputFrame.pack(pady=100)
+        InputFrame.propagate(0)
+        InputFrame.configure(width=750, height=250)  
+
+
+        #Full name entry
+        Fullname = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+        Fullname.place(x=30, y=50)
+        FullNameheading = Label(InputFrame, text="Full Name", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+        FullNameheading.place(x=25,y=70)
+        Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=70)
+
+        # User name entry
+        Username = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+        Username.place(x=300, y=50)
+        UserNameheading = Label(InputFrame, text="Username", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+        UserNameheading.place(x=300,y=70)
+        Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=70)
+
+        # email entry
+        Email = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+        Email.place(x=30, y=100)
+        Emailheading = Label(InputFrame, text="Email", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
+        Emailheading.place(x=25,y=120)
+        Frame(InputFrame, width=400, height=2, bg="Black").place(x=25, y=120)
+
+        #password
+        Password = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+        Password.place(x=30, y=150)
+        Passwordheading = Label(InputFrame, text="Password", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
+        Passwordheading.place(x=25,y=170)
+        Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=170)
+
+        Button(InputFrame, image=add_teacher_icon, bd=0, width=250, bg="#8B8878",activebackground='#8B8878', command=lambda: add_teacher_to_db(Fullname.get(), Username.get(), Email.get(), Password.get())).pack(side=BOTTOM)
+
+    def add_teacher_to_db(name, username, email, password):
+        try:
+            connection = connect_to_db()
+            if connection:
+                cursor = connection.cursor()
+                query = "INSERT INTO users (name, username, email, password, role) VALUES (%s, %s, %s, %s, %s)"
+                cursor.execute(query, (name, username, email, password, 'teacher'))
+                connection.commit()
+                messagebox.showinfo("Success", "Teacher added successfully!")
+                cursor.close()
+        except Error as e:
+            print("Error while connecting to MySQL", e)
+        finally:
+            if connection and connection.is_connected():
+                connection.close()
+
+    def remove_teacher():
+        clear_window()
+        root.title("Remove Teacher")
+
+        clear_window()
+        root.title("Add Teacher")
+        button_width = 128
+        MainFrame=Frame(root,bg=back_ground_clr)
+        MainFrame.pack()
+        MainFrame.propagate(0)
+        MainFrame.configure(width=1000, height=500)
+
+        back_icon = PhotoImage(file='images/Back.png')
+        root.back_icon = back_icon
+        back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
+        back_btn.place( y=18, width=button_width, height=12)
+
+        
+        remove_icon = PhotoImage(file='images/RemoveBtn.png')
+        root.remove_teacher_icon = remove_icon
+
+        InputFrame=Frame(MainFrame,bg='#8B8878')
+        InputFrame.pack(pady=100)
+        InputFrame.propagate(0)
+        InputFrame.configure(width=750, height=250)  
+
+        Label(InputFrame, text="Remove Teacher", font=('Microsoft YaHei UI Light', 23, 'bold'), bg='#8B8878', fg='#57a1f8').pack(pady=20)
+    
+        Label(InputFrame, text="Enter Username of Teacher to remove", bg='#8B8878').pack(pady=5)
+        entry_username = Entry(InputFrame, width=30, bg='white')
+        entry_username.pack(pady=5)
+       
+        Button(InputFrame, image=remove_icon, bd=0, width=150, bg='#8B8878',activebackground='#8B8878', command=lambda: remove_teacher_from_db(entry_username.get())).pack(pady=20)
+
+    def remove_teacher_from_db(username):
+        try:
+            connection = connect_to_db()
+            if connection:
+                cursor = connection.cursor()
+                # Start a transaction
+                connection.start_transaction()
+            
+                # Delete from Teachers table
+                query_teachers = "DELETE FROM teachers WHERE username = %s"
+                cursor.execute(query_teachers, (username,))
+            
+                # Delete from Users table
+                query_users = "DELETE FROM users WHERE username = %s AND role = 'teacher'"
+                cursor.execute(query_users, (username,))
+            
+                # Commit the transaction
+                connection.commit()
+            
+                if cursor.rowcount > 0:
+                    messagebox.showinfo("Success", "Teacher removed successfully!")
+                else:
+                    messagebox.showinfo("Error", "No teacher found with that username.")
+                
+                cursor.close()
+        except Error as e:
+            # Rollback the transaction in case of error
+            if connection:
+                connection.rollback()
+            print("Error while connecting to MySQL", e)
+        finally:
+            if connection and connection.is_connected():
+                connection.close()
+
+    def add_student():
+        clear_window()
+        root.title("Add Student")
+        button_width = 128
+
+        MainFrame=Frame(root,bg=back_ground_clr)
+        MainFrame.pack()
+        MainFrame.propagate(0)
+        MainFrame.configure(width=1000, height=500)
+        heading = Label(MainFrame, text="Add Student", fg='#57a1f8', font=('Microsoft YaHei UI Light', 23, 'bold'), bg=back_ground_clr)
+        heading.place(x=350, y=5)
+        #-------------------BUTTON ----------#
+        back_icon = PhotoImage(file='images/Back.png')
+        add_teacher_icon = PhotoImage(file='images/AddBtn.png')
+
+        root.back_icon = back_icon
+        root.add_student_icon = add_teacher_icon
+
+        back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
+        back_btn.place( y=18, width=button_width, height=12)
+
+        #-------------------BACK BUTTON ----------#
+
+
+        InputFrame=Frame(MainFrame,bg='#8B8878')
+        InputFrame.pack(pady=100)
+        InputFrame.propagate(0)
+        InputFrame.configure(width=750, height=250)  
+
+
+        #Full name entry
+        Fullname = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+        Fullname.place(x=30, y=50)
+        FullNameheading = Label(InputFrame, text="Full Name", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+        FullNameheading.place(x=25,y=70)
+        Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=70)
+
+        # User name entry
+        Username = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+        Username.place(x=300, y=50)
+        UserNameheading = Label(InputFrame, text="Username", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+        UserNameheading.place(x=300,y=70)
+        Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=70)
+
+        # email entry
+        Email = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+        Email.place(x=30, y=100)
+        Emailheading = Label(InputFrame, text="Email", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
+        Emailheading.place(x=25,y=120)
+        Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=120)
+
+        # Course entry
+        Course = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+        Course.place(x=300, y=100)
+        CourseNameheading = Label(InputFrame, text="Course", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
+        CourseNameheading.place(x=300,y=120)
+        Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=120)
+
+
+        #password
+        Password = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
+        Password.place(x=30, y=150)
+        Passwordheading = Label(InputFrame, text="Password", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
+        Passwordheading.place(x=25,y=170)
+        Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=170)
+
+        Button(InputFrame, image=add_teacher_icon, bd=0, width=250, bg="#8B8878",activebackground="#8B8878", command=lambda: add_student_to_db(Fullname.get(),Course.get(), Username.get(), Email.get(), Password.get())).pack(side=BOTTOM)
+
+    def add_student_to_db(name, subject, username, email, password):
+        try:
+            connection = connect_to_db()
+            if connection:
+                cursor = connection.cursor()
+                query = "INSERT INTO users (name, subject, username, email, password, role) VALUES (%s, %s, %s, %s, %s, %s)"
+                cursor.execute(query, (name, subject, username, email, password, 'student'))
+                connection.commit()
+                messagebox.showinfo("Success", "Student added successfully!")
+                cursor.close()
+        except Error as e:
+            print("Error while connecting to MySQL", e)
+        finally:
+            if connection and connection.is_connected():
+                connection.close()
+
+    def remove_student():
+        clear_window()
+        root.title("Remove Student")
+        button_width = 128
+        MainFrame=Frame(root,bg=back_ground_clr)
+        MainFrame.pack()
+        MainFrame.propagate(0)
+        MainFrame.configure(width=1000, height=500)
+
+        back_icon = PhotoImage(file='images/Back.png')
+        root.back_icon = back_icon
+        back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
+        back_btn.place( y=18, width=button_width, height=12)
+
+        
+        remove_icon = PhotoImage(file='images/RemoveBtn.png')
+        root.remove_student_icon = remove_icon
+
+        InputFrame=Frame(MainFrame,bg='#8B8878')
+        InputFrame.pack(pady=100)
+        InputFrame.propagate(0)
+        InputFrame.configure(width=750, height=250)  
+
+        Label(InputFrame, text="Remove Student", font=('Microsoft YaHei UI Light', 23, 'bold'), bg='#8B8878', fg='#57a1f8').pack(pady=20)
+    
+        Label(InputFrame, text="Enter Username of Student to remove", bg='#8B8878').pack(pady=5)
+        entry_username = Entry(InputFrame, width=30, bg='white')
+        entry_username.pack(pady=5)
+       
+        Button(InputFrame, image=remove_icon, bd=0, width=150, bg='#8B8878',activebackground='#8B8878', command=lambda: remove_student_from_db(entry_username.get())).pack(pady=20)
+
+    def remove_student_from_db(username):
+        try:
+            connection = connect_to_db()
+            if connection:
+                cursor = connection.cursor()
+                # Start a transaction
+                connection.start_transaction()
+
+                # Delete from Students table
+                query_students = "DELETE FROM students WHERE username = %s"
+                cursor.execute(query_students, (username,))
+                students_deleted = cursor.rowcount
+
+                # Delete from Users table
+                query_users = "DELETE FROM users WHERE username = %s AND role = 'student'"
+                cursor.execute(query_users, (username,))
+                users_deleted = cursor.rowcount
+
+                # Commit the transaction
+                connection.commit()
+
+                if students_deleted > 0 and users_deleted > 0:
+                    messagebox.showinfo("Success", "Student removed successfully from both tables!")
+                else:
+                    messagebox.showinfo("Error", "No student found with that username.")
+
+                cursor.close()
+        except Error as e:
+            # Rollback the transaction in case of error
+            if connection:
+                connection.rollback()
+            print("Error while connecting to MySQL", e)
+        finally:
+            if connection and connection.is_connected():
+                connection.close()###----------------------------------END ADMIN DASHBOARDS CODE -------------------------------###
+
+
+
 def show_teacher_dashboard():
     root.title("Teacher Dashboard")
     Label(root, text="Welcome to the Teacher Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
@@ -266,321 +565,51 @@ def show_teacher_dashboard():
     Button(root, text="Manage Questions", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=manage_questions).pack(pady=10)
     Button(root, text="Add Student", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=add_student_by_teacher).pack(pady=10)
 
+    def create_quiz():
+        messagebox.showinfo("Create Quiz", "This feature is under construction.")
+
+    def view_results():
+        messagebox.showinfo("View Results", "This feature is under construction.")
+
+    def manage_questions():
+        messagebox.showinfo("Manage Questions", "This feature is under construction.")
+
+    def add_student_by_teacher():
+        clear_window()
+        root.title("Add Student")
+
+        Label(root, text="Add Student", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
+
+        Label(root, text="Name", bg='white').pack(pady=5)
+        entry_name = Entry(root, width=30, bg='white')
+        entry_name.pack(pady=5)
+
+        Label(root, text="Subject", bg='white').pack(pady=5)
+        entry_subject = Entry(root, width=30, bg='white')
+        entry_subject.pack(pady=5)
+
+        Label(root, text="Username", bg='white').pack(pady=5)
+        entry_username = Entry(root, width=30, bg='white')
+        entry_username.pack(pady=5)
+
+        Label(root, text="Email", bg='white').pack(pady=5)
+        entry_email = Entry(root, width=30, bg='white')
+        entry_email.pack(pady=5)
+
+        Label(root, text="Password", bg='white').pack(pady=5)
+        entry_password = Entry(root, width=30, show='*', bg='white')
+        entry_password.pack(pady=5)
+
+        Button(root, text="Add Student", width=20, pady=7, bg="#57a1f8", fg="white", command=lambda: add_student_to_db(entry_name.get(), entry_subject.get(), entry_username.get(), entry_email.get(), entry_password.get())).pack(pady=20)
+        back_button = Button(root, text="Back", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=show_teacher_dashboard)
+        back_button.pack(pady=10)###----------------------------------END TEACHER DASHBOARDS CODE ----------------------------###
+
 def show_student_dashboard():
     root.title("Student Dashboard")
     Label(root, text="Welcome to the Student Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
     # Add more widgets and functionalities as needed
+
 ###----------------------------------END DASHBOARDS CODE -------------------------------------###
-   
-
-def add_teacher():
-    clear_window()
-    root.title("Add Teacher")
-
-    
-
-    MainFrame=Frame(root,bg=back_ground_clr)
-    MainFrame.pack()
-    MainFrame.propagate(0)
-    MainFrame.configure(width=1000, height=500)
-    heading = Label(MainFrame, text="Add Teacher", fg='#57a1f8', font=('Microsoft YaHei UI Light', 23, 'bold'), bg=back_ground_clr)
-    heading.place(x=350, y=5)
-    #-------------------BUTTON ----------#
-    back_icon = PhotoImage(file='images/Back.png')
-    add_teacher_icon = PhotoImage(file='images/AddTchBtn.png')
-
-    root.back_icon = back_icon
-    root.add_student_icon = add_teacher_icon
-
-    
-    
-    #-------------------BACK BUTTON ----------#
-
-
-    InputFrame=Frame(MainFrame,bg='#8B8878')
-    InputFrame.pack(pady=100)
-    InputFrame.propagate(0)
-    InputFrame.configure(width=750, height=250)  
-
-
-    #Full name entry
-    Fullname = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
-    Fullname.place(x=30, y=50)
-    FullNameheading = Label(InputFrame, text="Full Name", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
-    FullNameheading.place(x=25,y=70)
-    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=70)
-
-    # User name entry
-    Username = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
-    Username.place(x=300, y=50)
-    UserNameheading = Label(InputFrame, text="Username", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
-    UserNameheading.place(x=300,y=70)
-    Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=70)
-
-    # email entry
-    Email = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
-    Email.place(x=30, y=100)
-    Emailheading = Label(InputFrame, text="Email", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
-    Emailheading.place(x=25,y=120)
-    Frame(InputFrame, width=400, height=2, bg="Black").place(x=25, y=120)
-
-    #password
-    Password = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
-    Password.place(x=30, y=150)
-    Passwordheading = Label(InputFrame, text="Password", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
-    Passwordheading.place(x=25,y=170)
-    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=170)
-
-    Button(InputFrame, image=add_teacher_icon, bd=0, width=250, bg="#8B8878", command=lambda: add_teacher_to_db(Fullname.get(), Username.get(), Email.get(), Password.get())).pack(side=BOTTOM)
-
-def add_teacher_to_db(name, username, email, password):
-    try:
-        connection = connect_to_db()
-        if connection:
-            cursor = connection.cursor()
-            query = "INSERT INTO users (name, username, email, password, role) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(query, (name, username, email, password, 'teacher'))
-            connection.commit()
-            messagebox.showinfo("Success", "Teacher added successfully!")
-            cursor.close()
-    except Error as e:
-        print("Error while connecting to MySQL", e)
-    finally:
-        if connection and connection.is_connected():
-            connection.close()
-
-def remove_teacher():
-    clear_window()
-    root.title("Remove Teacher")
-
-    Label(root, text="Remove Teacher", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
-    
-    Label(root, text="Username", bg='white').pack(pady=5)
-    entry_username = Entry(root, width=30, bg='white')
-    entry_username.pack(pady=5)
-    
-    Button(root, text="Remove Teacher", width=20, pady=7, bg="#57a1f8", fg="white", command=lambda: remove_teacher_from_db(entry_username.get())).pack(pady=20)
-    Button(root, text="Back to Manage Teachers", width=20, pady=7, bg="#57a1f8", fg="white", command=manage_teachers).pack(pady=10)
-
-def remove_teacher_from_db(username):
-    try:
-        connection = connect_to_db()
-        if connection:
-            cursor = connection.cursor()
-            # Start a transaction
-            connection.start_transaction()
-            
-            # Delete from Teachers table
-            query_teachers = "DELETE FROM teachers WHERE username = %s"
-            cursor.execute(query_teachers, (username,))
-            
-            # Delete from Users table
-            query_users = "DELETE FROM users WHERE username = %s AND role = 'teacher'"
-            cursor.execute(query_users, (username,))
-            
-            # Commit the transaction
-            connection.commit()
-            
-            if cursor.rowcount > 0:
-                messagebox.showinfo("Success", "Teacher removed successfully!")
-            else:
-                messagebox.showinfo("Error", "No teacher found with that username.")
-                
-            cursor.close()
-    except Error as e:
-        # Rollback the transaction in case of error
-        if connection:
-            connection.rollback()
-        print("Error while connecting to MySQL", e)
-    finally:
-        if connection and connection.is_connected():
-            connection.close()
-
-def add_student():
-    clear_window()
-    root.title("Add Student")
-    button_width = 128
-
-    MainFrame=Frame(root,bg=back_ground_clr)
-    MainFrame.pack()
-    MainFrame.propagate(0)
-    MainFrame.configure(width=1000, height=500)
-    heading = Label(MainFrame, text="Add Student", fg='#57a1f8', font=('Microsoft YaHei UI Light', 23, 'bold'), bg=back_ground_clr)
-    heading.place(x=350, y=5)
-    #-------------------BUTTON ----------#
-    back_icon = PhotoImage(file='images/Back.png')
-    add_teacher_icon = PhotoImage(file='images/AddStuBtn.png')
-
-    root.back_icon = back_icon
-    root.add_student_icon = add_teacher_icon
-
-    back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=manage_students)
-    back_btn.place( y=18, width=button_width, height=12)
-    
-    #-------------------BACK BUTTON ----------#
-
-
-    InputFrame=Frame(MainFrame,bg='#8B8878')
-    InputFrame.pack(pady=100)
-    InputFrame.propagate(0)
-    InputFrame.configure(width=750, height=250)  
-
-
-    #Full name entry
-    Fullname = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
-    Fullname.place(x=30, y=50)
-    FullNameheading = Label(InputFrame, text="Full Name", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
-    FullNameheading.place(x=25,y=70)
-    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=70)
-
-    # User name entry
-    Username = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
-    Username.place(x=300, y=50)
-    UserNameheading = Label(InputFrame, text="Username", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
-    UserNameheading.place(x=300,y=70)
-    Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=70)
-
-    # email entry
-    Email = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
-    Email.place(x=30, y=100)
-    Emailheading = Label(InputFrame, text="Email", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
-    Emailheading.place(x=25,y=120)
-    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=120)
-
-    # Course entry
-    Course = Entry(InputFrame, width=25, fg="White",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
-    Course.place(x=300, y=100)
-    CourseNameheading = Label(InputFrame, text="Course", fg='#CCCCCC', font=('Microsoft YaHei UI',9,), bg='#8B8878')
-    CourseNameheading.place(x=300,y=120)
-    Frame(InputFrame, width=220, height=2, bg="Black").place(x=300, y=120)
-
-
-    #password
-    Password = Entry(InputFrame, width=25, fg="Black",bg='#8B8878', border=0, font=('Microsoft YaHei UI Light', 11))
-    Password.place(x=30, y=150)
-    Passwordheading = Label(InputFrame, text="Password", fg='white', font=('Microsoft YaHei UI Light',9,), bg='#8B8878')
-    Passwordheading.place(x=25,y=170)
-    Frame(InputFrame, width=220, height=2, bg="Black").place(x=25, y=170)
-
-    Button(InputFrame, image=add_teacher_icon, bd=0, width=250, bg="#8B8878", command=lambda: add_student_to_db(Fullname.get(),Course.get(), Username.get(), Email.get(), Password.get())).pack(side=BOTTOM)
-    
-
-
-
-
-    '''
-
-    
-    Button(root, text="Back to Manage Students", width=20, pady=7, bg="#57a1f8", fg="white", command=manage_students).pack(pady=10)
-    '''
-
-def add_student_to_db(name, subject, username, email, password):
-    try:
-        connection = connect_to_db()
-        if connection:
-            cursor = connection.cursor()
-            query = "INSERT INTO users (name, subject, username, email, password, role) VALUES (%s, %s, %s, %s, %s, %s)"
-            cursor.execute(query, (name, subject, username, email, password, 'student'))
-            connection.commit()
-            messagebox.showinfo("Success", "Student added successfully!")
-            cursor.close()
-    except Error as e:
-        print("Error while connecting to MySQL", e)
-    finally:
-        if connection and connection.is_connected():
-            connection.close()
-
-def remove_student():
-    clear_window()
-    root.title("Remove Student")
-
-    Label(root, text="Remove Student", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
-    
-    Label(root, text="Username", bg='white').pack(pady=5)
-    entry_username = Entry(root, width=30, bg='white')
-    entry_username.pack(pady=5)
-    
-    Button(root, text="Remove Student", width=20, pady=7, bg="#57a1f8", fg="white", command=lambda: remove_student_from_db(entry_username.get())).pack(pady=20)
-    Button(root, text="Back to Manage Students", width=20, pady=7, bg="#57a1f8", fg="white", command=manage_students).pack(pady=10)
-
-def remove_student_from_db(username):
-    try:
-        connection = connect_to_db()
-        if connection:
-            cursor = connection.cursor()
-            # Start a transaction
-            connection.start_transaction()
-            
-            # Delete from Students table
-            query_students = "DELETE FROM students WHERE username = %s"
-            cursor.execute(query_students, (username,))
-            students_deleted = cursor.rowcount
-            
-            # Delete from Users table
-            query_users = "DELETE FROM users WHERE username = %s AND role = 'student'"
-            cursor.execute(query_users, (username,))
-            users_deleted = cursor.rowcount
-            
-            # Commit the transaction
-            connection.commit()
-            
-            if students_deleted > 0 and users_deleted > 0:
-                messagebox.showinfo("Success", "Student removed successfully from both tables!")
-            else:
-                messagebox.showinfo("Error", "No student found with that username.")
-                
-            cursor.close()
-    except Error as e:
-        # Rollback the transaction in case of error
-        if connection:
-            connection.rollback()
-        print("Error while connecting to MySQL", e)
-    finally:
-        if connection and connection.is_connected():
-            connection.close()###----------------------------------END ADMIN DASHBOARDS CODE -------------------------------###
-
-
-
-###----------------------------------TEACHER DASHBOARDS CODE ---------------------------------###
-def create_quiz():
-    messagebox.showinfo("Create Quiz", "This feature is under construction.")
-
-def view_results():
-    messagebox.showinfo("View Results", "This feature is under construction.")
-
-def manage_questions():
-    messagebox.showinfo("Manage Questions", "This feature is under construction.")
-
-def add_student_by_teacher():
-    clear_window()
-    root.title("Add Student")
-
-    Label(root, text="Add Student", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
-    
-    Label(root, text="Name", bg='white').pack(pady=5)
-    entry_name = Entry(root, width=30, bg='white')
-    entry_name.pack(pady=5)
-    
-    Label(root, text="Subject", bg='white').pack(pady=5)
-    entry_subject = Entry(root, width=30, bg='white')
-    entry_subject.pack(pady=5)
-    
-    Label(root, text="Username", bg='white').pack(pady=5)
-    entry_username = Entry(root, width=30, bg='white')
-    entry_username.pack(pady=5)
-    
-    Label(root, text="Email", bg='white').pack(pady=5)
-    entry_email = Entry(root, width=30, bg='white')
-    entry_email.pack(pady=5)
-    
-    Label(root, text="Password", bg='white').pack(pady=5)
-    entry_password = Entry(root, width=30, show='*', bg='white')
-    entry_password.pack(pady=5)
-    
-    Button(root, text="Add Student", width=20, pady=7, bg="#57a1f8", fg="white", command=lambda: add_student_to_db(entry_name.get(), entry_subject.get(), entry_username.get(), entry_email.get(), entry_password.get())).pack(pady=20)
-    back_button = Button(root, text="Back", font=('Microsoft YaHei UI Light', 15), bg="#57a1f8", fg="white", command=show_teacher_dashboard)
-    back_button.pack(pady=10)###----------------------------------END TEACHER DASHBOARDS CODE ----------------------------###
-
 
 
 ###----------------------------------AUTHENTICATION CODE  (LOGIN/SIGNIN) --------------------###
