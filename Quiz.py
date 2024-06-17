@@ -337,36 +337,57 @@ def show_admin_dashboard():
     def remove_teacher():
         clear_window()
         root.title("Remove Teacher")
-
-        clear_window()
-        root.title("Add Teacher")
         button_width = 128
-        MainFrame=Frame(root,bg=back_ground_clr)
+        MainFrame = Frame(root, bg='#FFFFFF')  # Change 'back_ground_clr' to a specific color or use a standard color like white
         MainFrame.pack()
         MainFrame.propagate(0)
         MainFrame.configure(width=1000, height=500)
 
         back_icon = PhotoImage(file='images/Back.png')
         root.back_icon = back_icon
-        back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
-        back_btn.place( y=18, width=button_width, height=12)
+        back_btn = Button(MainFrame, image=back_icon, bg='#FFFFFF', bd=0, activebackground='#FFFFFF', command=show_admin_dashboard)
+        back_btn.place(y=18, width=button_width, height=12)
 
-        
         remove_icon = PhotoImage(file='images/RemoveBtn.png')
         root.remove_teacher_icon = remove_icon
 
-        InputFrame=Frame(MainFrame,bg='#8B8878')
+        InputFrame = Frame(MainFrame, bg='#8B8878')
         InputFrame.pack(pady=100)
         InputFrame.propagate(0)
-        InputFrame.configure(width=750, height=250)  
+        InputFrame.configure(width=750, height=250)
 
         Label(InputFrame, text="Remove Teacher", font=('Microsoft YaHei UI Light', 23, 'bold'), bg='#8B8878', fg='#57a1f8').pack(pady=20)
-    
-        Label(InputFrame, text="Enter Username of Teacher to remove", bg='#8B8878').pack(pady=5)
-        entry_username = Entry(InputFrame, width=30, bg='white')
-        entry_username.pack(pady=5)
-       
-        Button(InputFrame, image=remove_icon, bd=0, width=150, bg='#8B8878',activebackground='#8B8878', command=lambda: remove_teacher_from_db(entry_username.get())).pack(pady=20)
+
+        teachers = fetch_teachers_from_db()
+        if teachers:
+            teacher_names = [f"{teacher[1]} ({teacher[0]})" for teacher in teachers]
+            Label(InputFrame, text="Select teacher to remove", bg='#8B8878').pack(pady=5)
+            selected_teacher = StringVar()
+            selected_teacher.set(teacher_names[0])  # Default selection
+
+            teachers_dropdown = OptionMenu(InputFrame, selected_teacher, *teacher_names)
+            teachers_dropdown.pack(pady=10)
+
+            Button(InputFrame, image=remove_icon, bd=0, width=150, bg='#8B8878', activebackground='#8B8878',
+                   command=lambda: remove_teacher_from_db(selected_teacher.get().split(' ')[-1][1:-1])).pack(pady=20)
+        else:
+            messagebox.showinfo("Error", "No teachers found in the database.")
+            add_teacher()
+
+    def fetch_teachers_from_db():
+        try:
+            connection = connect_to_db()
+            if connection:
+                cursor = connection.cursor()
+                query = "SELECT username, name FROM teachers"
+                cursor.execute(query)
+                teachers = cursor.fetchall()
+                cursor.close()
+                connection.close()
+                return teachers
+        except Error as e:
+            print("Error fetching teachers from database:", e)
+            return []
 
     def remove_teacher_from_db(username):
         try:
@@ -375,23 +396,23 @@ def show_admin_dashboard():
                 cursor = connection.cursor()
                 # Start a transaction
                 connection.start_transaction()
-            
+
                 # Delete from Teachers table
                 query_teachers = "DELETE FROM teachers WHERE username = %s"
                 cursor.execute(query_teachers, (username,))
-            
+
                 # Delete from Users table
                 query_users = "DELETE FROM users WHERE username = %s AND role = 'teacher'"
                 cursor.execute(query_users, (username,))
-            
+
                 # Commit the transaction
                 connection.commit()
-            
+
                 if cursor.rowcount > 0:
                     messagebox.showinfo("Success", "Teacher removed successfully!")
                 else:
                     messagebox.showinfo("Error", "No teacher found with that username.")
-                
+
                 cursor.close()
         except Error as e:
             # Rollback the transaction in case of error
@@ -486,36 +507,60 @@ def show_admin_dashboard():
             if connection and connection.is_connected():
                 connection.close()
 
+    def fetch_students_from_db():
+        try:
+            connection = connect_to_db()
+            if connection:
+                cursor = connection.cursor()
+                query = "SELECT username, name FROM students"
+                cursor.execute(query)
+                students = cursor.fetchall()
+                cursor.close()
+                connection.close()
+                return students
+        except Error as e:
+            print("Error fetching students from database:", e)
+            return []
+
     def remove_student():
         clear_window()
         root.title("Remove Student")
         button_width = 128
-        MainFrame=Frame(root,bg=back_ground_clr)
+        MainFrame = Frame(root, bg='black')  # Change 'back_ground_clr' to a specific color or use a standard color like white
         MainFrame.pack()
         MainFrame.propagate(0)
         MainFrame.configure(width=1000, height=500)
 
         back_icon = PhotoImage(file='images/Back.png')
         root.back_icon = back_icon
-        back_btn = Button(MainFrame, image=back_icon, bg=back_ground_clr, bd=0, activebackground=back_ground_clr,command=show_admin_dashboard)
-        back_btn.place( y=18, width=button_width, height=12)
+        back_btn = Button(MainFrame, image=back_icon, bg='black', bd=0, activebackground='black', command=show_admin_dashboard)
+        back_btn.place(y=18, width=button_width, height=12)
 
-        
         remove_icon = PhotoImage(file='images/RemoveBtn.png')
         root.remove_student_icon = remove_icon
 
-        InputFrame=Frame(MainFrame,bg='#8B8878')
+        InputFrame = Frame(MainFrame, bg='#8B8878')
         InputFrame.pack(pady=100)
         InputFrame.propagate(0)
-        InputFrame.configure(width=750, height=250)  
+        InputFrame.configure(width=750, height=250)
 
         Label(InputFrame, text="Remove Student", font=('Microsoft YaHei UI Light', 23, 'bold'), bg='#8B8878', fg='#57a1f8').pack(pady=20)
-    
-        Label(InputFrame, text="Enter Username of Student to remove", bg='#8B8878').pack(pady=5)
-        entry_username = Entry(InputFrame, width=30, bg='white')
-        entry_username.pack(pady=5)
-       
-        Button(InputFrame, image=remove_icon, bd=0, width=150, bg='#8B8878',activebackground='#8B8878', command=lambda: remove_student_from_db(entry_username.get())).pack(pady=20)
+
+        students = fetch_students_from_db()
+        if students:
+            student_names = [f"{student[1]} ({student[0]})" for student in students]
+            Label(InputFrame, text="Select student to remove", bg='#8B8878').pack(pady=5)
+            selected_student = StringVar()
+            selected_student.set(student_names[0])  # Default selection
+
+            students_dropdown = OptionMenu(InputFrame, selected_student, *student_names)
+            students_dropdown.pack(pady=10)
+
+            Button(InputFrame, image=remove_icon, bd=0, width=150, bg='#8B8878', activebackground='#8B8878',
+                   command=lambda: remove_student_from_db(selected_student.get().split(' ')[-1][1:-1])).pack(pady=20)
+        else:
+            messagebox.showinfo("Error", "No students found in the database.")
+            add_student()
 
     def remove_student_from_db(username):
         try:
@@ -539,7 +584,7 @@ def show_admin_dashboard():
                 connection.commit()
 
                 if students_deleted > 0 and users_deleted > 0:
-                    messagebox.showinfo("Success", "Student removed successfully from both tables!")
+                    messagebox.showinfo("Success", "Student removed successfully !")
                 else:
                     messagebox.showinfo("Error", "No student found with that username.")
 
@@ -551,8 +596,7 @@ def show_admin_dashboard():
             print("Error while connecting to MySQL", e)
         finally:
             if connection and connection.is_connected():
-                connection.close()###----------------------------------END ADMIN DASHBOARDS CODE -------------------------------###
-
+                connection.close()
 
 
 def show_teacher_dashboard():
