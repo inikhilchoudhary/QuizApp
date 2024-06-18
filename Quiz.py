@@ -2,6 +2,8 @@ import mysql.connector
 from mysql.connector import Error
 from tkinter import *
 from tkinter import messagebox
+from CTkMessagebox import CTkMessagebox
+import customtkinter
 
 back_ground_clr = '#383838'
 
@@ -71,7 +73,6 @@ def sign_in(user, password):
 
 
 ###----------------------------------DASHBOARDS CODE -----------------------------------------###
-
 
 def show_admin_dashboard():
     clear_window()
@@ -551,39 +552,51 @@ def show_admin_dashboard():
             if connection and connection.is_connected():
                 connection.close()
 
-
 def show_teacher_dashboard():
     root.title("Teacher Dashboard")
     clear_window()
-    mainFrame=Frame(root,bg='black')
-    mainFrame.pack()
+    
+    mainFrame = Frame(root, bg='black')
+    mainFrame.pack(fill="both", expand=True)
     mainFrame.pack_propagate(False)
-    mainFrame.configure(height=500,width=1000)
-    Label(mainFrame, text="Welcome to the Teacher Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="black", fg='#57a1f8').pack(pady=20)
+    mainFrame.configure(height=500, width=1000)
 
+    # Load icons
     CreateQuiz_icon = PhotoImage(file='images/QuizBtn.png')
     Result_icon = PhotoImage(file='images/ResultBtn.png')
     AddStu_icon = PhotoImage(file='images/AddStuByTeachBtn.png')
-    MQues_icon = PhotoImage(file='images/ManQueBtn.png')
+    Other_icon = PhotoImage(file='images/OthersBtn.png')
+    Logout_icon = PhotoImage(file='images/LogoutBtn.png')
 
-    mainFrame.CreateQuiz=CreateQuiz_icon
-    mainFrame.Result=Result_icon
-    mainFrame.AddStu=AddStu_icon
-    mainFrame.Ques=MQues_icon
+    # Keep a reference to the images
+    mainFrame.CreateQuiz = CreateQuiz_icon
+    mainFrame.Result = Result_icon
+    mainFrame.AddStu = AddStu_icon
+    mainFrame.Ques = Other_icon
+    mainFrame.Logout = Logout_icon
 
-    Button(mainFrame, image=CreateQuiz_icon, bd=0, width=250, bg="black",activebackground="black", command=create_quiz).pack(pady=10)
-    Button(mainFrame, image=Result_icon, bd=0, width=250, bg="black",activebackground="black", command=view_results).pack(pady=10)
-    Button(mainFrame, image=AddStu_icon, bd=0, width=250, bg="black",activebackground="black", command=add_student_by_teacher).pack(pady=10)
-    Button(mainFrame, image=MQues_icon, bd=0, width=250, bg="black",activebackground="black", command=manage_questions).pack(pady=10)
+    # Create dashboard frame
+
+    # Create option frame 
+    OptionFrame = Frame(mainFrame, height=500, width=420, bg='black')
+    OptionFrame.place(relx=0.5, rely=0.5, anchor='center')
+
+    # Add buttons to the option frame
+    Button(OptionFrame, image=CreateQuiz_icon, bd=0, bg="black", activebackground="black", command=create_quiz).pack(pady=10)
+    Button(OptionFrame, image=Result_icon, bd=0, bg="black", activebackground="black", command=view_results).pack(pady=10)
+    Button(OptionFrame, image=AddStu_icon, bd=0, bg="black", activebackground="black", command=add_student_by_teacher).pack(pady=10)
+    Button(OptionFrame, image=Other_icon, bd=0, bg="black", activebackground="black", command=other).pack(pady=10,side=LEFT)
+    Button(OptionFrame, image=Logout_icon, bd=0, bg="black", activebackground="black", command=show_login_form).pack(pady=10,side=LEFT)
+
 
 def create_quiz():
-    messagebox.showinfo("Create Quiz", "This feature is under construction.")
+    CTkMessagebox(title="Create Quiz", message="This is under construction!")
 
 def view_results():
-    messagebox.showinfo("View Results", "This feature is under construction.")
+    CTkMessagebox(title="View Result", message="This is under construction!")
 
-def manage_questions():
-    messagebox.showinfo("Manage Questions", "This feature is under construction.")
+def other():
+    CTkMessagebox(title="Others", message="This is under construction!")
 
 def add_student_by_teacher():
     clear_window()
@@ -787,4 +800,4 @@ root.configure(bg="#fff")
 root.resizable(False, False)
 root.wm_iconbitmap('QuizBeeLogo.ico') 
 
-show_login_form()
+show_login_form()   
