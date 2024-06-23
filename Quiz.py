@@ -1,9 +1,11 @@
 import mysql.connector
 from mysql.connector import Error
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox,simpledialog
 from CTkMessagebox import CTkMessagebox
-import customtkinter
+
+quizzes = []
+
 
 back_ground_clr = '#383838'
 
@@ -575,8 +577,6 @@ def show_teacher_dashboard():
     mainFrame.Ques = Other_icon
     mainFrame.Logout = Logout_icon
 
-    # Create dashboard frame
-
     # Create option frame 
     OptionFrame = Frame(mainFrame, height=500, width=420, bg='black')
     OptionFrame.place(relx=0.5, rely=0.5, anchor='center')
@@ -586,11 +586,94 @@ def show_teacher_dashboard():
     Button(OptionFrame, image=Result_icon, bd=0, bg="black", activebackground="black", command=view_results).pack(pady=10)
     Button(OptionFrame, image=AddStu_icon, bd=0, bg="black", activebackground="black", command=add_student_by_teacher).pack(pady=10)
     Button(OptionFrame, image=Other_icon, bd=0, bg="black", activebackground="black", command=other).pack(pady=10,side=LEFT)
-    Button(OptionFrame, image=Logout_icon, bd=0, bg="black", activebackground="black", command=show_login_form).pack(pady=10,side=LEFT)
-
+    Button(OptionFrame, image=Logout_icon, bd=0, bg="black", activebackground="black", command=show_login_form).pack(pady=10)
 
 def create_quiz():
-    CTkMessagebox(title="Create Quiz", message="This is under construction!")
+    clear_window()
+
+    mainFrame = Frame(root, bg='black')
+    mainFrame.pack(fill="both", expand=True)
+    mainFrame.pack_propagate(False)
+    mainFrame.configure(height=500, width=1000)
+    
+    num_questions = simpledialog.askinteger("Input", "How many questions do you want to add?", minvalue=1, maxvalue=100)
+    
+    if num_questions is None:  # User cancelled the dialog
+        show_teacher_dashboard()
+        return
+
+    # Create a canvas and scrollbar
+    canvas = Canvas(mainFrame, bg='black')
+    scrollbar = Scrollbar(mainFrame, orient="vertical", command=canvas.yview)
+    scrollable_frame = Frame(canvas, bg='black')
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+
+    def on_mouse_wheel(event):
+        canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
+
+    # Bind mouse wheel to canvas
+    canvas.bind_all("<MouseWheel>", on_mouse_wheel)
+    
+    questions = []
+    for i in range(num_questions):
+        question_frame = Frame(scrollable_frame, pady=10, bg='black')
+        question_frame.pack(fill="both", expand=True)
+        
+        Label(question_frame, text=f"Question {i+1}:", bg='black', fg='white').pack(anchor='w')
+        question_text = Entry(question_frame, width=100)
+        question_text.pack(anchor='w')
+
+        options = []
+        for j in range(4):  # Assume 4 options per question
+            Label(question_frame, text=f"Option {j+1}:", bg='black', fg='white').pack(anchor='w')
+            option_text = Entry(question_frame, width=50)
+            option_text.pack(anchor='w')
+            options.append(option_text)
+        
+        Label(question_frame, text="Correct Option (1-4):", bg='black', fg='white').pack(anchor='w')
+        correct_option = Entry(question_frame, width=5)
+        correct_option.pack(anchor='w')
+        
+        questions.append((question_text, options, correct_option))
+    
+    def save_quiz():
+        quiz_data = []
+        for question_text, options, correct_option in questions:
+            question = question_text.get()
+            opts = [opt.get() for opt in options]
+            correct = correct_option.get()
+            if not question or not all(opts) or not correct.isdigit() or not (1 <= int(correct) <= 4):
+                messagebox.showerror("Error", "Please fill all fields correctly.")
+                return
+            quiz_data.append({
+                'question': question,
+                'options': opts,
+                'correct_option': int(correct)
+            })
+        
+        # Save quiz_data to global quizzes list
+        quizzes.append(quiz_data)
+        
+        messagebox.showinfo("Success", "Quiz saved successfully!")
+        show_teacher_dashboard()
+    
+    button_frame = Frame(mainFrame, bg='black')
+    button_frame.pack(pady=20)
+    
+    Button(button_frame, text="Save Quiz", command=save_quiz).pack(side="left", padx=10)
+    Button(button_frame, text="Cancel", command=show_teacher_dashboard).pack(side="left", padx=10)
 
 def view_results():
     CTkMessagebox(title="View Result", message="This is under construction!")
@@ -669,9 +752,132 @@ def add_student_to_db(name, subject, username, email, password):
             connection.close()
 
 def show_student_dashboard():
-    root.title("Student Dashboard")
-    Label(root, text="Welcome to the Student Dashboard", font=('Microsoft YaHei UI Light', 23, 'bold'), bg="white", fg='#57a1f8').pack(pady=20)
-    # Add more widgets and functionalities as needed
+    mainFrame = Frame(root, bg='black')
+    mainFrame.pack(fill="both", expand=True)
+    mainFrame.pack_propagate(False)
+    mainFrame.configure(height=500, width=1000)
+
+    GiveQuiz_icon = PhotoImage(file='images/GiveQuizBtn.png')
+    Score_icon = PhotoImage(file='images/ScoreBtn.png')
+
+    # Keep a reference to the images
+    mainFrame.GiveQuiz = GiveQuiz_icon
+    mainFrame.Score = Score_icon
+    
+    Button(mainFrame, image=GiveQuiz_icon, bd=0, bg="black", activebackground="black", command=give_quiz).pack(pady=10)
+    Button(mainFrame, image=Score_icon, bd=0, bg="black", activebackground="black", command=Score).pack(pady=10)
+    
+def give_quiz():
+    clear_window()
+
+    mainFrame = Frame(root, bg='black')
+    mainFrame.pack(fill="both", expand=True)
+    mainFrame.pack_propagate(False)
+    mainFrame.configure(height=500, width=1000)
+    
+    if not quizzes:
+        Label(mainFrame, text="No quizzes available.", bg='black', fg='white').pack(pady=20)
+        Button(mainFrame, text="Back", command=show_student_dashboard).pack(pady=10)
+        return
+    
+    selected_quiz = quizzes[0]  # Assuming we are displaying the first quiz for simplicity
+
+    # Create a canvas and scrollbar
+    canvas = Canvas(mainFrame, bg='black')
+    scrollbar = Scrollbar(mainFrame, orient="vertical", command=canvas.yview)
+    scrollable_frame = Frame(canvas, bg='black')
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+
+    def on_mouse_wheel(event):
+        canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
+
+    # Bind mouse wheel to canvas
+    canvas.bind_all("<MouseWheel>", on_mouse_wheel)
+    
+    student_answers = []
+    for i, question_data in enumerate(selected_quiz):
+        question_frame = Frame(scrollable_frame, pady=10, bg='black')
+        question_frame.pack(fill="both", expand=True)
+        
+        Label(question_frame, text=f"Question {i+1}:", bg='black', fg='white').pack(anchor='w')
+        Label(question_frame, text=question_data['question'], bg='black', fg='white').pack(anchor='w')
+        
+        var = StringVar(value="")
+        for j, option in enumerate(question_data['options']):
+            Radiobutton(question_frame, text=option, variable=var, value=str(j+1), bg='black', fg='white').pack(anchor='w')
+        
+        student_answers.append(var)
+    
+    def submit_quiz():
+        results = []
+        for i, var in enumerate(student_answers):
+            answer = var.get()
+            correct_option = selected_quiz[i]['correct_option']
+            results.append({
+                'question': selected_quiz[i]['question'],
+                'given_answer': answer,
+                'correct_answer': correct_option,
+                'is_correct': answer == str(correct_option)
+            })
+        
+        # Calculate the score
+        correct_count = sum(1 for result in results if result['is_correct'])
+        total_questions = len(results)
+        score = {
+            'correct_count': correct_count,
+            'total_questions': total_questions,
+            'results': results
+        }
+        
+        # Show thank you message and then call Score
+        messagebox.showinfo("Thank You", "Thank you for submitting the quiz!")
+        Score(score)
+
+    button_frame = Frame(mainFrame, bg='black')
+    button_frame.pack(pady=20)
+    
+    Button(button_frame, text="Submit Quiz", command=submit_quiz).pack(side="left", padx=10)
+    Button(button_frame, text="Cancel", command=show_student_dashboard).pack(side="left", padx=10)
+
+def Score(score):
+    clear_window()
+    
+    mainFrame = Frame(root, bg='black')
+    mainFrame.pack(fill="both", expand=True)
+    mainFrame.pack_propagate(False)
+    mainFrame.configure(height=500, width=1000)
+    
+    Label(mainFrame, text="Quiz Score", bg='black', fg='white', font=("Arial", 24)).pack(pady=20)
+    Label(mainFrame, text=f"You answered {score['correct_count']} out of {score['total_questions']} questions correctly.", bg='black', fg='white', font=("Arial", 18)).pack(pady=10)
+    
+    # Display detailed results
+    for i, result in enumerate(score['results']):
+        question_frame = Frame(mainFrame, pady=5, bg='black')
+        question_frame.pack(fill="both", expand=True)
+        
+        Label(question_frame, text=f"Question {i+1}: {result['question']}", bg='black', fg='white').pack(anchor='w')
+        Label(question_frame, text=f"Your Answer: {result['given_answer']}", bg='black', fg='white').pack(anchor='w')
+        if result['is_correct']:
+            Label(question_frame, text="Correct!", bg='black', fg='green').pack(anchor='w')
+        else:
+            Label(question_frame, text=f"Correct Answer: {result['correct_answer']}", bg='black', fg='red').pack(anchor='w')
+    
+    Button(mainFrame, text="Back to Dashboard", command=show_student_dashboard).pack(pady=20)
+
+    
+
 
 ###----------------------------------END DASHBOARDS CODE -------------------------------------###
 
