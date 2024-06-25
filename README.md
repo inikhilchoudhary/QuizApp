@@ -5,11 +5,12 @@
 QuizBee is an educational application built with Python and Tkinter, designed for institutes to manage quizzes, teachers, and students.    <br>
   </p>
 
-<p align="center">
-  <img src="images/s1.png" alt="Quiz Bee Screenshot" width="700">
-  <img src="images/s2.png" alt="Quiz Bee Screenshot" width="700">
-  <img src="images/s3.png" alt="Quiz Bee Screenshot" width="700">
-</p>
+<!-- Insert Screenshot -->
+<div align="center" style="display: flex; justify-content: center; gap: 20px;">
+  <img src="https://github.com/inikhilchoudhary/QuizApp/assets/94347474/aa76be32-cdce-447b-a03d-85f5296b6d67" alt="Screenshot 1" width="300">
+  <img src="https://github.com/inikhilchoudhary/QuizApp/assets/94347474/441b65aa-6b58-4c29-b8a8-b7becb94af10" alt="Screenshot 2" width="300">
+  <img src="https://github.com/inikhilchoudhary/QuizApp/assets/94347474/0ebf7c1e-1320-4cea-85a2-52db54cbbcf9" alt="Screenshot 3" width="300">
+</div>
 
 
 <!-- TABLE OF CONTENTS -->
