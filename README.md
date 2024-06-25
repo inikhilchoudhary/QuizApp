@@ -5,6 +5,12 @@
 QuizBee is an educational application built with Python and Tkinter, designed for institutes to manage quizzes, teachers, and students.    <br>
   </p>
 
+<p align="center">
+  <img src="images/s1.png" alt="Quiz Bee Screenshot" width="700">
+  <img src="images/s2.png" alt="Quiz Bee Screenshot" width="700">
+  <img src="images/s3.png" alt="Quiz Bee Screenshot" width="700">
+</p>
+
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -78,6 +84,11 @@ Ensure you have Python and MySQL installed on your machine.
 ```bash
 python quizapp.py
 ```
+
+### Default Login:
+1. admin  : `username : a`,   `password : a`.
+1. teacher: `username : t`, `password : t`.
+1. student: `username : n`, `password : n`.
 
 ## Authors
 
